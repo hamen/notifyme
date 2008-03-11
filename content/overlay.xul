@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://helloworld/skin/overlay.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://notifyme/locale/overlay.dtd">
+<overlay id="notifyme-overlay"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  
+  <script src="overlay.js"/>
+  <script type="application/x-javascript" src="chrome://xmpp4moz/content/xmpp.js"/>
+
+<popup id="contact-popup">
+  <menuitem label="Notify me"
+            oncommand="Dialog.onMenuItemCommand(event);"/>      
+    </popup>
+</overlay> 
