@@ -1,0 +1,6 @@
+content notifyme content/
+overlay chrome://sameplace/content/experimental/contacts.xul chrome://notifyme/content/overlay.xul
+
+locale notifyme en-US locale/en-US/
+
+skin notifyme classic/1.0 skin/
