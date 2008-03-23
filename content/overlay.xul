@@ -9,6 +9,6 @@
 
 <popup id="contact-popup">
   <menuitem label="Notify me"
-            oncommand="Dialog.onMenuItemCommand(event);"/>      
+            oncommand="Dialog.notifyMe(document.popupNode);"/>      
     </popup>
 </overlay> 
