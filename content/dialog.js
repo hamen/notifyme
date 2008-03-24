@@ -10,13 +10,17 @@ function onOK() {
    // Return the changed arguments.
    // Notice if user clicks cancel, window.arguments[0].out remains null
    // because this function is never called
-   window.arguments[0].out = {address:document.getElementById("address").value,
-			      online:document.getElementById("online").checked,
-			      offline:document.getElementById("offline").checked};
-   return true;
+    window.arguments[0].out = null;
+
+    window.arguments[0].out = {address:document.getElementById("address").value,
+			       online:document.getElementById("online").checked,
+			       offline:document.getElementById("offline").checked,
+			       away:document.getElementById("away").checked,
+			       busy:document.getElementById("busy").checked};
+    return true;
 }
 
 function onCancel(){
-
-    alert('Cancel');
+    
+    //    alert('Cancel');
 }

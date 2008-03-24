@@ -15,6 +15,8 @@
     <row align="center"><label value="Contact:"/><label id="address"/></row>
     <row align="center"><spacer/><checkbox id="online" label="goes on-line"/></row>
     <row align="center"><spacer/><checkbox id="offline" label="goes off-line"/></row>
+    <row align="center"><spacer/><checkbox id="away" label="goes away"/></row>
+    <row align="center"><spacer/><checkbox id="busy" label="goes busy"/></row>
   </rows>
 </grid>
 <!-- Content -->
