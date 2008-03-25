@@ -52,6 +52,10 @@ var Dialog = {
 var address;
 var counts = {offline:0, online:0, away:0, busy:0};
 
+var alertsService = Components.classes["@mozilla.org/alerts-service;1"]
+                              .getService(Components.interfaces.nsIAlertsService);
+
+
 window.addEventListener("load", function(e) { Dialog.onLoad(e); }, false);
 
 
@@ -64,20 +68,36 @@ function detectedContact(presence, checkboxes) {
     */
 
     if(presence.stanza.@type == 'unavailable' && checkboxes.offline && counts.offline < 1){
-	alert(address + ' has gone offline!');
+	showPopup(address, 'offline');
 	counts.offline = 1;
     }
     else if (presence.stanza.show == 'away' && checkboxes.away == true && counts.away < 1){
-	    alert(address + ' changed status to AWAY');
-	    counts.away = 1;
+	showPopup(address, 'away');
+	counts.away = 1;
     }
     else if (presence.stanza.show == 'dnd' && checkboxes.busy && counts.busy < 1){
-	alert(address + ' changed status to BUSY' );
+	showPopup(address, 'busy');
 	counts.busy = 1;
 
     }
     else if (presence.stanza.@type == undefined && presence.stanza.show != 'dnd' && presence.stanza.show != 'away' && checkboxes.online && counts.online < 1){
-	alert(address + ' has come online!');
+	showPopup(address, 'online');
 	counts.online = 1;
     }
 }
+
+function showPopup(contact, status){
+
+alertsService.showAlertNotification("chrome://notifyme/skin/logo96.png", 
+                                    contact, "has changed status to " + status, 
+                                    false, "", null);
+
+}
+
+
+/*
+  Il multi user posso farlo con un oggetto unico con account, address e params.[inn][out]
+  Inventati qualcosa.
+
+
+ */
