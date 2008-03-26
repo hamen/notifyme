@@ -1,3 +1,20 @@
+/*
+  This file is part of 'Notify me' (SamePlace addon).
+
+  'Notify me' is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License,
+  or any later version.
+  
+  'Notify me' is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with 'Notify me'.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 var Dialog = {
   onLoad: function init() {
     // initialization code
@@ -9,7 +26,7 @@ var Dialog = {
   notifyMe: function showDialog(xulPopupNode) {
 	// Get clicked contact JID address
 	var xulContact = $(xulPopupNode, '^ .contact');
-	address = xulContact.getAttribute('address');
+	var address = xulContact.getAttribute('address');
 	//alert('address is: ' + address);
 
 
@@ -20,13 +37,15 @@ var Dialog = {
 	window.openDialog("chrome://notifyme/content/dialog.xul", "",
 			  "chrome, dialog, modal, resizable=yes", params).focus();
 	if (params.out) {
-	    // User clicked ok. Process changed arguments; e.g. write them to disk or whatever
+	    // User clicked ok. Process changed arguments;
 	    /*alert('Got out params \n online checkbox is: ' + params.out.online
 		  + '\n offline is: ' +params.out.offline
 		  + '\n away is: ' + params.out.away
 		  + '\n busy is: ' + params.out.busy);
 	    */
-	    boxes = params.out;
+
+	    var boxes = params.out;
+	    var counts = {offline:0, online:0, away:0, busy:0};
 	    
 	    // Reset counts
 	    counts.online = 0;
@@ -34,14 +53,7 @@ var Dialog = {
 	    counts.away = 0;
 	    counts.busy = 0;
 
-	    // Start to sniff the channel
-	    channel.on({
-		    event : 'presence',
-			direction : 'in',
-			stanza : function(s) {
-			return XMPP.JID(s.@from).address == address;
-		    }},
-		function(presence) { detectedContact(presence, boxes); });
+	    watchon(address, boxes, counts);
 	}
 	else {
 	    // User clicked cancel. Typically, nothing is done here.
@@ -49,8 +61,8 @@ var Dialog = {
     }
 };
 
-var address;
-var counts = {offline:0, online:0, away:0, busy:0};
+//var address;
+// var counts = {offline:0, online:0, away:0, busy:0};
 
 var alertsService = Components.classes["@mozilla.org/alerts-service;1"]
                               .getService(Components.interfaces.nsIAlertsService);
@@ -59,13 +71,7 @@ var alertsService = Components.classes["@mozilla.org/alerts-service;1"]
 window.addEventListener("load", function(e) { Dialog.onLoad(e); }, false);
 
 
-function detectedContact(presence, checkboxes) {
-    /*
-    alert('Got out params \n online checkbox is: ' + checkboxes.online
-	  + '\n offline is: ' + checkboxes.offline
-	  + '\n away is: ' + checkboxes.away
-	  + '\n busy is: ' + checkboxes.busy);
-    */
+function detectedContact(presence, checkboxes, address, counts) {
 
     if(presence.stanza.@type == 'unavailable' && checkboxes.offline && counts.offline < 1){
 	showPopup(address, 'offline');
@@ -95,9 +101,14 @@ alertsService.showAlertNotification("chrome://notifyme/skin/logo96.png",
 }
 
 
-/*
-  Il multi user posso farlo con un oggetto unico con account, address e params.[inn][out]
-  Inventati qualcosa.
+function watchon(contact, boxes, counts){
+// Start to sniff the channel
+	    channel.on({
+		    event : 'presence',
+			direction : 'in',
+			stanza : function(s) {
+			return XMPP.JID(s.@from).address == contact;
+		    }},
+		function(presence) { detectedContact(presence, boxes, contact, counts); });
 
-
- */
+}
