@@ -61,9 +61,6 @@ var Dialog = {
     }
 };
 
-//var address;
-// var counts = {offline:0, online:0, away:0, busy:0};
-
 var alertsService = Components.classes["@mozilla.org/alerts-service;1"]
                               .getService(Components.interfaces.nsIAlertsService);
 
@@ -72,23 +69,28 @@ window.addEventListener("load", function(e) { Dialog.onLoad(e); }, false);
 
 
 function detectedContact(presence, checkboxes, address, counts) {
-
+    
+   
+    
     if(presence.stanza.@type == 'unavailable' && checkboxes.offline && counts.offline < 1){
 	showPopup(address, 'offline');
 	counts.offline = 1;
+	window.getAttention();
     }
     else if (presence.stanza.show == 'away' && checkboxes.away == true && counts.away < 1){
 	showPopup(address, 'away');
 	counts.away = 1;
+	window.getAttention();
     }
     else if (presence.stanza.show == 'dnd' && checkboxes.busy && counts.busy < 1){
 	showPopup(address, 'busy');
 	counts.busy = 1;
-
+	window.getAttention();
     }
     else if (presence.stanza.@type == undefined && presence.stanza.show != 'dnd' && presence.stanza.show != 'away' && checkboxes.online && counts.online < 1){
 	showPopup(address, 'online');
 	counts.online = 1;
+	window.getAttention();
     }
 }
 
@@ -112,3 +114,18 @@ function watchon(contact, boxes, counts){
 		function(presence) { detectedContact(presence, boxes, contact, counts); });
 
 }
+
+
+/*
+
+  Recognize sidebar status:
+ 
+  var view = document.getElementById('view');
+    
+  if(util.hasClass(view, 'compact'))
+  alert('SP sidebar is: compact, i.e. close or avatar only mode');
+  else
+  alert('SP sidebar is expanded');
+
+  
+*/
