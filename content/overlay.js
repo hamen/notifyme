@@ -19,9 +19,12 @@ var Dialog = {
   onLoad: function init() {
     // initialization code
     this.initialized = true;
-    var channel = XMPP.createChannel();
+    
+    var env = {};
+    loader.loadSubScript('chrome://xmpp4moz/content/xmpp.js', env);
+    var XMPP = env.XMPP;
 
-  },
+    },
 
   notifyMe: function showDialog(xulPopupNode) {
 	// Get clicked contact JID address
@@ -105,14 +108,16 @@ alertsService.showAlertNotification("chrome://notifyme/skin/logo96.png",
 
 function watchon(contact, boxes, counts){
 // Start to sniff the channel
-	    channel.on({
-		    event : 'presence',
+    XMPP.createChannel().on({
+	    event : 'presence',
 			direction : 'in',
 			stanza : function(s) {
 			return XMPP.JID(s.@from).address == contact;
 		    }},
-		function(presence) { detectedContact(presence, boxes, contact, counts); });
-
+	//	function(presence) { detectedContact(presence, boxes, contact, counts); });
+	function(presence) { 
+	    var nick =  XMPP.nickFor(presence.session.name, XMPP.JID(presence.stanza.@from).address);
+	    detectedContact(presence, boxes, nick, counts); });
 }
 
 
