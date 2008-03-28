@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <RDF:RDF xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 <RDF:Description about="urn:mozilla:extension:notifyme@hamen.org">
-  <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBAAc1oDmm98jjJOWrLzyuc0LMITAPXCysmy7Yfh0TQuOvdjQvaTFY5L3x7VkyfAVdiN+hNizrdYI4kU9IARjHxosNS36AGoSR4vCMj+f8DRrufiy+CQ+yOrJcdtVfDa5mIeWr80bSiSrvZVQRbLVVmTJonvrqKWfWyrn356zwl8dp</em:signature>
-  <em:updateHash>sha256:1e71f42fc734f9c4bdd06b6780774343f0dd86134ad6674609fb5e0149b7bd98</em:updateHash>
-  <em:updateLink>http://repo.hyperstruct.net/notifyme/unstable/notifyme-unstable.xpi</em:updateLink>
+  <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBACrX+FitDH/vLbvDSD+Oeb4GMGO8bX0/X/Q7z8XN3vGDjnjBRxYYj/5zAjtqGPxykTaImDragu+m3mjC8kaIhE2PswosTHvlamoHpiV3OQkChz/aeUMn/Uhlc9SvYPcG55cKuIiS2yr7zJWXiYiLueRvQ3DLZ28lqcPMJe+l07gH</em:signature>
+  <em:updateHash>sha256:2e1083507dfb388d8127dfd7b58bc5193697ad96eca66bdfcc807b6ab8c11130</em:updateHash>
+  <em:updateLink>http://hamen.homelinux.org/notifyme/devel/notifyme-devel.xpi</em:updateLink>
   <em:updates>
     <RDF:Seq>
       <RDF:li>
@@ -13,15 +13,15 @@
               <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
               <em:maxVersion>3.0.*</em:maxVersion>
               <em:minVersion>2.0</em:minVersion>
-              <em:updateHash>sha256:1e71f42fc734f9c4bdd06b6780774343f0dd86134ad6674609fb5e0149b7bd98</em:updateHash>
-              <em:updateLink>http://repo.hyperstruct.net/notifyme/unstable/notifyme-unstable.xpi</em:updateLink>
+              <em:updateHash>sha256:2e1083507dfb388d8127dfd7b58bc5193697ad96eca66bdfcc807b6ab8c11130</em:updateHash>
+              <em:updateLink>http://hamen.homelinux.org/notifyme/devel/notifyme-devel.xpi</em:updateLink>
             </RDF:Description>
           </em:targetApplication>
-          <em:version>.2008032819</em:version>
+          <em:version>0.2.0.2008032820</em:version>
         </RDF:Description>
       </RDF:li>
     </RDF:Seq>
   </em:updates>
-  <em:version>.2008032819</em:version>
+  <em:version>0.2.0.2008032820</em:version>
 </RDF:Description>
 </RDF:RDF>
