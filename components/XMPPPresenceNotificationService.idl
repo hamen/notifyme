@@ -1,0 +1,8 @@
+#include "nsISupports.idl"
+
+[scriptable, uuid(54affa5c-4d41-47d3-86d0-32676fe6a638)]
+interface nsIXMPPPresenceNotificationService: nsISupports
+{
+    void reload();
+    void showmsgpopup(in string contact, in string message);
+};  

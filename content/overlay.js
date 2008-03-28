@@ -21,9 +21,9 @@ var Dialog = {
     this.initialized = true;
     
     var env = {};
-    loader.loadSubScript('chrome://xmpp4moz/content/xmpp.js', env);
-    var XMPP = env.XMPP;
-
+    //    loader.loadSubScript('chrome://xmpp4moz/content/xmpp.js', env);
+    // var XMPP = env.XMPP;
+    
     },
 
   notifyMe: function showDialog(xulPopupNode) {
@@ -56,7 +56,8 @@ var Dialog = {
 	    counts.away = 0;
 	    counts.busy = 0;
 
-	    watchon(address, boxes, counts);
+	    // watchonMsgs();
+	    watchonUser(address, boxes, counts);
 	}
 	else {
 	    // User clicked cancel. Typically, nothing is done here.
@@ -68,59 +69,89 @@ var alertsService = Components.classes["@mozilla.org/alerts-service;1"]
                               .getService(Components.interfaces.nsIAlertsService);
 
 
-window.addEventListener("load", function(e) { Dialog.onLoad(e); }, false);
+window.addEventListener("load", function(e) {
+	Components.classes['@hamen.org/notifyme/service;1'].getService(Components.interfaces.nsIXMPPPresenceNotificationService);
+	Dialog.onLoad(e);
+	
+    }, false);
 
 
 function detectedContact(presence, checkboxes, address, counts) {
     
-   
     
     if(presence.stanza.@type == 'unavailable' && checkboxes.offline && counts.offline < 1){
-	showPopup(address, 'offline');
+	showStatusPopup(address, 'offline');
 	counts.offline = 1;
 	window.getAttention();
     }
     else if (presence.stanza.show == 'away' && checkboxes.away == true && counts.away < 1){
-	showPopup(address, 'away');
+	showStatusPopup(address, 'away');
 	counts.away = 1;
 	window.getAttention();
     }
     else if (presence.stanza.show == 'dnd' && checkboxes.busy && counts.busy < 1){
-	showPopup(address, 'busy');
+	showStatusPopup(address, 'busy');
 	counts.busy = 1;
 	window.getAttention();
     }
     else if (presence.stanza.@type == undefined && presence.stanza.show != 'dnd' && presence.stanza.show != 'away' && checkboxes.online && counts.online < 1){
-	showPopup(address, 'online');
+	showStatusPopup(address, 'online');
 	counts.online = 1;
 	window.getAttention();
     }
 }
 
-function showPopup(contact, status){
+// AlertNotification has user alias as title
+function showStatusPopup(contact, status){
 
 alertsService.showAlertNotification("chrome://notifyme/skin/logo96.png", 
                                     contact, "has changed status to " + status, 
                                     false, "", null);
+}
 
+/*
+function showMsgPopup(contact, text){
+
+alertsService.showAlertNotification("chrome://notifyme/skin/logo96.png", 
+                                    contact, text, 
+                                    false, "", null);
 }
 
 
-function watchon(contact, boxes, counts){
+function watchonMsgs(){
+    alert('watching');
+    channel.on({
+	    event     : 'message',
+	    direction : 'in',
+		}, function(message) {
+            if(isCompact()) showMsgPopup(message.account, message.stanza.body);
+        });
+}
+*/
+
+function watchonUser(contact, boxes, counts){
 // Start to sniff the channel
-    XMPP.createChannel().on({
-	    event : 'presence',
-			direction : 'in',
-			stanza : function(s) {
-			return XMPP.JID(s.@from).address == contact;
-		    }},
-	//	function(presence) { detectedContact(presence, boxes, contact, counts); });
+    var channel = XMPP.createChannel();
+
+    channel.on({
+	    event     : 'presence',
+	    direction : 'in',
+		stanza : function(s) {
+		return XMPP.JID(s.@from).address == contact;
+	    }},
 	function(presence) { 
 	    var nick =  XMPP.nickFor(presence.session.name, XMPP.JID(presence.stanza.@from).address);
 	    detectedContact(presence, boxes, nick, counts); });
 }
 
-
+/*
+function isCompact(){
+//   Recognize sidebar status
+    var view = document.getElementById('view');
+    if(util.hasClass(view, 'compact')) return true;
+    else return false;
+}
+*/
 /*
 
   Recognize sidebar status:
