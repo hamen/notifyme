@@ -37,9 +37,7 @@ function init() {
 }
 
 function showmsgpopup(contact, text){
-    var test = win.getAttention();
-    dump(test);
-    if (count < 1 && test){
+    if (count < 1){
 	alertService.showAlertNotification("chrome://notifyme/skin/logo96.png", contact, text, false, "", null);
 	count++;
     }

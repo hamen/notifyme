@@ -7,13 +7,13 @@ BRANCH=$(shell basename $(shell pwd))
 
 # Modify domain and URLs to suit yourself here
 
-EXTID=$(NAME)@hyperstruct.net
-UPDATE_URL=http://repo.hyperstruct.net/$(NAME)/$(BRANCH)/update.rdf
+EXTID=$(NAME)@hamen.org
+UPDATE_URL=http://hamen.homelinux.org:443/$(NAME)/$(BRANCH)/update.rdf
 XPI_URL=http://repo.hyperstruct.net/$(NAME)/$(BRANCH)/$(NAME)-$(BRANCH).xpi
 
 # Path for spock (http://hyperstruct.net/projects/spock)
 
-SIGN=/usr/local/share/spock/spock -d /home/bard/secdir -i urn:mozilla:extension:$(EXTID) -v $(VERSION)  -u $(XPI_URL) -f $(FILE)
+SIGN=/usr/local/share/spock/spock -d /home/ivan/secdir -i urn:mozilla:extension:$(EXTID) -v $(VERSION)  -u $(XPI_URL) -f $(FILE)
 
 # Latest darcs tag (if any) and build date will get appended to filename
 

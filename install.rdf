@@ -2,20 +2,20 @@
 <RDF:RDF xmlns:em="http://www.mozilla.org/2004/em-rdf#"
          xmlns:NC="http://home.netscape.com/NC-rdf#"
          xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-  <RDF:Description RDF:about="urn:mozilla:install-manifest"
-                   em:id="notifyme@hamen.org"
-                   em:name="Notify me (SamePlace addon)"
-                   em:version="0.1b"
-                   em:creator="Ivan Morgillo"
-                   em:description="Adds notifications to SamePlace"
-                   em:homepageURL="http://sameplace.cc"
-                   em:updateURL="http://hamen.homelinux.org:443/notifyme/update.rdf"
-                   em:contributor="Massimiliano Mirra"
-                   em:updateKey="MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCzf8xdR51r2snb+UKlVN5nxZew1b5ofyhotSm0rfjG0+4Po0VoplCwIIz5Okse3WUsaO2iFobRihqRoJkl8Z1+FVnrx9Yb6gO5Gkg4nCG252YktO2o1+RLAIIcH6wr4NfTaL6Lr2JvPbsKRoexZCWHEjFqSPDXJ7AhsR5O5SDtZwIDAQAB">
-    <em:targetApplication RDF:resource="rdf:#$73m1b"/>
-  </RDF:Description>
-  <RDF:Description RDF:about="rdf:#$73m1b"
+  <RDF:Description RDF:about="rdf:#$1b2kZ1"
                    em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
                    em:minVersion="2.0"
                    em:maxVersion="3.*" />
+  <RDF:Description RDF:about="urn:mozilla:install-manifest"
+                   em:id="notifyme@hamen.org"
+                   em:name="Notify me (SamePlace addon)"
+                   em:version="0.2"
+                   em:creator="Ivan Morgillo"
+                   em:description="Adds notifications to SamePlace"
+                   em:homepageURL="http://sameplace.cc"
+                   em:updateURL="http://hamen.homelinux.org:443/notifyme/unstable/update.rdf"
+                   em:contributor="Massimiliano Mirra"
+                   em:updateKey="MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCzf8xdR51r2snb+UKlVN5nxZew1b5ofyhotSm0rfjG0+4Po0VoplCwIIz5Okse3WUsaO2iFobRihqRoJkl8Z1+FVnrx9Yb6gO5Gkg4nCG252YktO2o1+RLAIIcH6wr4NfTaL6Lr2JvPbsKRoexZCWHEjFqSPDXJ7AhsR5O5SDtZwIDAQAB">
+    <em:targetApplication RDF:resource="rdf:#$1b2kZ1"/>
+  </RDF:Description>
 </RDF:RDF>
