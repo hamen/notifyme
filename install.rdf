@@ -10,7 +10,8 @@
                    em:description="Adds notifications to SamePlace"
                    em:homepageURL="http://sameplace.cc"
                    em:updateURL="http://hamen.homelinux.org:443/notifyme/update.rdf"
-                   em:contributor="Massimiliano Mirra">
+                   em:contributor="Massimiliano Mirra"
+                   em:updateKey="MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCzf8xdR51r2snb+UKlVN5nxZew1b5ofyhotSm0rfjG0+4Po0VoplCwIIz5Okse3WUsaO2iFobRihqRoJkl8Z1+FVnrx9Yb6gO5Gkg4nCG252YktO2o1+RLAIIcH6wr4NfTaL6Lr2JvPbsKRoexZCWHEjFqSPDXJ7AhsR5O5SDtZwIDAQAB">
     <em:targetApplication RDF:resource="rdf:#$73m1b"/>
   </RDF:Description>
   <RDF:Description RDF:about="rdf:#$73m1b"

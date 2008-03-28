@@ -17,6 +17,7 @@ const ns_composing = new Namespace('http://jabber.org/protocol/chatstates');
 
 // ----------------------------------------------------------------------
 var count = 0;
+var win;
 
 function init() {
     var env = {};
@@ -36,7 +37,9 @@ function init() {
 }
 
 function showmsgpopup(contact, text){
-    if (count < 1){
+    var test = win.getAttention();
+    dump(test);
+    if (count < 1 && test){
 	alertService.showAlertNotification("chrome://notifyme/skin/logo96.png", contact, text, false, "", null);
 	count++;
     }
@@ -47,7 +50,7 @@ function isCompact(){
     var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
     
     // MEMO: Specifing navigator:browser Notify me won't work with Thunderbird
-    var win = wm.getMostRecentWindow("navigator:browser");
+    win = wm.getMostRecentWindow("navigator:browser");
     if(win.sameplace.isCompact()) return true;
     else return false;
 }
