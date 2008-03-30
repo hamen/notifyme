@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <RDF:RDF xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 <RDF:Description about="urn:mozilla:extension:notifyme@hamen.org">
-  <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBACrX+FitDH/vLbvDSD+Oeb4GMGO8bX0/X/Q7z8XN3vGDjnjBRxYYj/5zAjtqGPxykTaImDragu+m3mjC8kaIhE2PswosTHvlamoHpiV3OQkChz/aeUMn/Uhlc9SvYPcG55cKuIiS2yr7zJWXiYiLueRvQ3DLZ28lqcPMJe+l07gH</em:signature>
-  <em:updateHash>sha256:2e1083507dfb388d8127dfd7b58bc5193697ad96eca66bdfcc807b6ab8c11130</em:updateHash>
+  <em:signature>MIGTMA0GCSqGSIb3DQEBDQUAA4GBADrkXJ83rEe1LMAc6Fe32+m7/SAaW28/RtOgXE7Tytl2hvPUGV+pvRSbstpCQO2jmIDjQSatmjz24+nbyTvqkNlxuGfr1tG8SBp/s69gufaja+9fK4+zhDeH7ACThhY6RbLNHqLF/EAS97QA8fguh35xH5ujv6wK0MV+tHO8pH57</em:signature>
+  <em:updateHash>sha256:fd8abf1b6a2e687ad8ba959ba76a9c9f581e9b3817df988faa57f4924a21abe6</em:updateHash>
   <em:updateLink>http://hamen.homelinux.org/notifyme/devel/notifyme-devel.xpi</em:updateLink>
   <em:updates>
     <RDF:Seq>
@@ -13,15 +13,15 @@
               <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
               <em:maxVersion>3.0.*</em:maxVersion>
               <em:minVersion>2.0</em:minVersion>
-              <em:updateHash>sha256:2e1083507dfb388d8127dfd7b58bc5193697ad96eca66bdfcc807b6ab8c11130</em:updateHash>
+              <em:updateHash>sha256:fd8abf1b6a2e687ad8ba959ba76a9c9f581e9b3817df988faa57f4924a21abe6</em:updateHash>
               <em:updateLink>http://hamen.homelinux.org/notifyme/devel/notifyme-devel.xpi</em:updateLink>
             </RDF:Description>
           </em:targetApplication>
-          <em:version>0.2.0.2008032820</em:version>
+          <em:version>0.2.0.2008033012</em:version>
         </RDF:Description>
       </RDF:li>
     </RDF:Seq>
   </em:updates>
-  <em:version>0.2.0.2008032820</em:version>
+  <em:version>0.2.0.2008033012</em:version>
 </RDF:Description>
 </RDF:RDF>

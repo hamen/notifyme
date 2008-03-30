@@ -17,7 +17,7 @@ SIGN=/usr/local/share/spock/spock -d /home/ivan/secdir -i urn:mozilla:extension:
 
 # Latest darcs tag (if any) and build date will get appended to filename
 
-TAG=$(shell if [ -d _darcs ]; then darcs changes | grep '^  tagged ' | sed 's/  tagged //' | head -1; else echo 0.2.0; fi)
+TAG=$(shell if [ -d _darcs ]; then darcs changes | grep '^  tagged ' | sed 's/  tagged //' | head -1; else echo 0.0.0; fi)
 BUILD=$(shell date -u +%Y%m%d%H)
 ifdef TAG
 VERSION=$(TAG).$(BUILD)
