@@ -70,7 +70,13 @@ var alertsService = Components.classes["@mozilla.org/alerts-service;1"]
 
 
 window.addEventListener("load", function(e) {
-	Components.classes['@hamen.org/notifyme/service;1'].getService(Components.interfaces.nsIXMPPPresenceNotificationService);
+	
+	try {
+	    Components.classes['@hamen.org/notifyme/service;1'].getService(Components.interfaces.nsIXMPPPresenceNotificationService);
+	} catch(exp) {
+	    Components.utils.reportError(exp); // report the error and continue execution
+	}
+	
 	Dialog.onLoad(e);
 	
     }, false);

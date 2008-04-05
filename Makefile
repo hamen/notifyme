@@ -8,8 +8,12 @@ BRANCH=$(shell basename $(shell pwd))
 # Modify domain and URLs to suit yourself here
 
 EXTID=$(NAME)@hamen.org
-UPDATE_URL=http://hamen.homelinux.org:443/$(NAME)/$(BRANCH)/update.rdf
-XPI_URL=http://hamen.homelinux.org/$(NAME)/$(BRANCH)/$(NAME)-$(BRANCH).xpi
+#UPDATE_URL=http://hamen.homelinux.org:443/$(NAME)/$(BRANCH)/update.rdf
+#XPI_URL=http://hamen.homelinux.org/$(NAME)/$(BRANCH)/$(NAME)-$(BRANCH).xpi
+
+UPDATE_URL=http://hamen.homelinux.org:443/notifyme/devel/update.rdf
+XPI_URL=http://hamen.homelinux.org:443/notifyme/devel/notifyme-devel.xpi
+ 
 
 # Path for spock (http://hyperstruct.net/projects/spock)
 
@@ -17,7 +21,7 @@ SIGN=/usr/local/share/spock/spock -d /home/ivan/secdir -i urn:mozilla:extension:
 
 # Latest darcs tag (if any) and build date will get appended to filename
 
-TAG=$(shell if [ -d _darcs ]; then darcs changes | grep '^  tagged ' | sed 's/  tagged //' | head -1; else echo 0.0.0; fi)
+#TAG=$(shell if [ -d _darcs ]; then darcs changes | grep '^  tagged ' | sed 's/  tagged //' | head -1; else echo 0.0.0; fi)
 BUILD=$(shell date -u +%Y%m%d%H)
 ifdef TAG
 VERSION=$(TAG).$(BUILD)

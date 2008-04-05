@@ -28,9 +28,19 @@ function init() {
 	    event     : 'message',
 	    direction : 'in',
 		}, function(message) {
-	    if(isCompact() && message.stanza.ns_composing::composing == undefined){
-		var nick =  XMPP.nickFor(message.session.name, XMPP.JID(message.stanza.@from).address);
-		showmsgpopup(nick, message.stanza.body);
+	    // Detect if sidebar is not Expanded and msg body is not blank
+	    if(isCompact() && message.stanza.body != undefined){ // message.stanza.ns_composing::composing == undefined){
+		// Detect if somebody D&Ded you an image
+		if(message.stanza.body.match("image:") != null | message.stanza.body.match("<img") != null ){
+		    dump("got image");
+		    var nick =  XMPP.nickFor(message.session.name, XMPP.JID(message.stanza.@from).address);
+		    showmsgpopup(nick, "has sent you an image");
+		}
+		else{
+		    dump("got message");
+		    var nick =  XMPP.nickFor(message.session.name, XMPP.JID(message.stanza.@from).address);
+		    showmsgpopup(nick, message.stanza.body);
+		}
 	    }
 	    else count = 0;
         });
