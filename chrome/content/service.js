@@ -1,16 +1,27 @@
 // GLOBAL DEFINITIONS
 // ----------------------------------------------------------------------
 
+/* Inizialize popup alert */
 const alertService = Components
     .classes['@mozilla.org/alerts-service;1']
     .getService(Components.interfaces.nsIAlertsService);
+
+/* Enable external scripts import */
 const loader = Cc['@mozilla.org/moz/jssubscript-loader;1']
     .getService(Ci.mozIJSSubScriptLoader);
+
+/* SHOULD ENABLE TO READ/WRITE FIREFOX PREFS */
 const prefBranch = Components
     .classes["@mozilla.org/preferences-service;1"]
     .getService(Components.interfaces.nsIPrefService)
     .getBranch('extensions.notifyme.');
 
+/* Initialize interfaces to play a sound alert*/
+var player = Components.classes["@mozilla.org/sound;1"].createInstance(Components.interfaces.nsISound) ;
+var ioservice = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService) ;
+var music = ioservice.newURI ("chrome://notifyme/content/alert.wav" , "" , null ) ; 
+
+/* NameSpaces */
 const ns_muc      = new Namespace('http://jabber.org/protocol/muc');
 const ns_muc_user = new Namespace('http://jabber.org/protocol/muc#user');
 const ns_composing = new Namespace('http://jabber.org/protocol/chatstates');
@@ -20,6 +31,7 @@ var count = 0;
 var win;
 
 function init() {
+    /* Make xmpp4moz available here */
     var env = {};
     loader.loadSubScript('chrome://xmpp4moz/content/xmpp.js', env);
     var XMPP = env.XMPP;
@@ -41,8 +53,6 @@ function init() {
 		else{
 		    dump("got message\n");
 		    
-
-
 		    /* Check if msg body is longer than 20 chars and cut it */
 		    if(msgbody.length > 40){
 
@@ -59,9 +69,11 @@ function init() {
         });
 }
 
+/* Show an alert popup and play a sound alert */
 function showmsgpopup(contact, text){
     if (count < 1){
 	alertService.showAlertNotification("chrome://notifyme/skin/logo96.png", contact, text, false, "", null);
+	player.play(music);
 	count++;
     }
 }
