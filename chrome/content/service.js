@@ -29,17 +29,30 @@ function init() {
 	    direction : 'in',
 		}, function(message) {
 	    // Detect if sidebar is not Expanded and msg body is not blank
-	    if(isCompact() && message.stanza.body != undefined){ // message.stanza.ns_composing::composing == undefined){
+	    if(isCompact() && message.stanza.body != undefined){
 		// Detect if somebody D&Ded you an image
-		if(message.stanza.body.match("image:") != null | message.stanza.body.match("<img") != null ){
-		    dump("got image");
+		msgbody = new String(message.stanza.body);
+		
+		if(msgbody.match("image:") != null || msgbody.match("<img") != null ){
+		    dump("got image\n");
 		    var nick =  XMPP.nickFor(message.session.name, XMPP.JID(message.stanza.@from).address);
 		    showmsgpopup(nick, "has sent you an image");
 		}
 		else{
-		    dump("got message");
+		    dump("got message\n");
+		    
+
+
+		    /* Check if msg body is longer than 20 chars and cut it */
+		    if(msgbody.length > 40){
+
+			msgbody = msgbody.substring(0,41) + " ...";
+		    }
+		    else msgbody;
+		    
 		    var nick =  XMPP.nickFor(message.session.name, XMPP.JID(message.stanza.@from).address);
-		    showmsgpopup(nick, message.stanza.body);
+		    showmsgpopup(nick, msgbody);
+		    //setTimeout(getFocus, 2);
 		}
 	    }
 	    else count = 0;
@@ -76,6 +89,10 @@ function show(title, availability, message) {
 }
 */
 
+function getFocus(){
+    win.focus();
+}
+
 function observe(subject, topic, data) {
     if(data != 'JabBiff')
         return;
@@ -88,3 +105,13 @@ function observe(subject, topic, data) {
         break;
     }
 }
+
+/*
+
+Usare display_filters per le emoticon nell'alert
+
+bard:
+hanno la funzionalita` di base ma a te servira` produrre un oggetto xul <image> piuttosto che uno e4x <img>
+guarda se puoi prendere la translation testo->xml da li`, e la parte che genera lo xul dalla contact list (che lo fa per le url)
+
+*/
