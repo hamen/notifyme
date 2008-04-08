@@ -11,7 +11,7 @@ const loader = Cc['@mozilla.org/moz/jssubscript-loader;1']
     .getService(Ci.mozIJSSubScriptLoader);
 
 /* SHOULD ENABLE TO READ/WRITE FIREFOX PREFS */
-const prefBranch = Components
+const pref = Components
     .classes["@mozilla.org/preferences-service;1"]
     .getService(Components.interfaces.nsIPrefService)
     .getBranch('extensions.notifyme.');
@@ -29,12 +29,13 @@ const ns_composing = new Namespace('http://jabber.org/protocol/chatstates');
 // ----------------------------------------------------------------------
 var count = 0;
 var win;
-
+var sound;
 function init() {
     /* Make xmpp4moz available here */
     var env = {};
     loader.loadSubScript('chrome://xmpp4moz/content/xmpp.js', env);
     var XMPP = env.XMPP;
+    
 
     XMPP.createChannel().on({
 	    event     : 'message',
@@ -49,6 +50,11 @@ function init() {
 		    dump("got image\n");
 		    var nick =  XMPP.nickFor(message.session.name, XMPP.JID(message.stanza.@from).address);
 		    showmsgpopup(nick, "has sent you an image");
+		}
+		else if (msgbody.match("http://") != null || msgbody.match("<a href=") != null ){
+		    dump("got url\n");
+		    var nick =  XMPP.nickFor(message.session.name, XMPP.JID(message.stanza.@from).address);
+		    showmsgpopup(nick, "probably has sent you a link");
 		}
 		else{
 		    dump("got message\n");
@@ -71,11 +77,17 @@ function init() {
 
 /* Show an alert popup and play a sound alert */
 function showmsgpopup(contact, text){
-    if (count < 1){
+    dump('count is: ' + count);
+
+    //    if (count < 1){
 	alertService.showAlertNotification("chrome://notifyme/skin/logo96.png", contact, text, false, "", null);
-	player.play(music);
-	count++;
-    }
+	//count++;
+
+	// Check prefs to play / not to play a sound alert
+	sound = eval(pref.getCharPref('toggleSoundKey'));
+	if (sound) player.play(music);
+
+	//}
 }
 
 function isCompact(){

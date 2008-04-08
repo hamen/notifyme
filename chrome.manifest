@@ -1,5 +1,6 @@
 content notifyme chrome/content/
 overlay chrome://sameplace/content/experimental/contacts.xul chrome://notifyme/content/overlay.xul
+overlay chrome://sameplace/content/preferences/preferences.xul chrome://notifyme/content/overlay.xul
 
 locale notifyme en-US chrome/locale/en-US/
 
