@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+
+<!--
+  This file is part of 'Notify me' (SamePlace addon).
+
+  'Notify me' is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License,
+  or any later version.
+  
+  'Notify me' is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with 'Notify me'.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<?xml-stylesheet href="chrome://notifyme/skin/overlay.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://notifyme/locale/overlay.dtd">
+
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <prefpane id="notifyme-pane">
+<!--
+    <preferences>
+      <preference id="notifyme-toggle-sound-key"
+                  name="extensions.notifyme.toggleSoundKey"
+                  type="bool"/>
+    </preferences>
+-->
+    <groupbox>
+  <checkbox id="notifyme-toggle-sound-key"
+	  label="Play a sound on alert popup"
+	  oncommand="notifymePrefs.toggleSound(checked)"/>
+
+</groupbox>
+
+  </prefpane>
+</overlay>
