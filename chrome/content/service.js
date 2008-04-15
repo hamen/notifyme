@@ -30,6 +30,8 @@ const ns_composing = new Namespace('http://jabber.org/protocol/chatstates');
 var count = 0;
 var win;
 var sound;
+var popup;
+
 function init() {
     /* Make xmpp4moz available here */
     var env = {};
@@ -45,30 +47,33 @@ function init() {
 	    if(isCompact() && message.stanza.body != undefined){
 		// Detect if somebody D&Ded you an image
 		msgbody = new String(message.stanza.body);
-		
-		if(msgbody.match("image:") != null || msgbody.match("<img") != null ){
-		    dump("got image\n");
-		    var nick =  XMPP.nickFor(message.session.name, XMPP.JID(message.stanza.@from).address);
-		    showmsgpopup(nick, "has sent you an image");
-		}
-		else if (msgbody.match("http://") != null || msgbody.match("<a href=") != null ){
-		    dump("got url\n");
-		    var nick =  XMPP.nickFor(message.session.name, XMPP.JID(message.stanza.@from).address);
-		    showmsgpopup(nick, "probably has sent you a link");
-		}
-		else{
-		    dump("got message\n");
-		    
-		    /* Check if msg body is longer than 20 chars and cut it */
-		    if(msgbody.length > 40){
-
-			msgbody = msgbody.substring(0,41) + " ...";
+	
+		popup = eval(pref.getCharPref('togglePopupKey'));
+		if(popup){
+		    if(msgbody.match("image:") != null || msgbody.match("<img") != null ){
+			dump("got image\n");
+			var nick =  XMPP.nickFor(message.session.name, XMPP.JID(message.stanza.@from).address);
+			showmsgpopup(nick, "has sent you an image");
 		    }
-		    else msgbody;
-		    
-		    var nick =  XMPP.nickFor(message.session.name, XMPP.JID(message.stanza.@from).address);
-		    showmsgpopup(nick, msgbody);
-		    //setTimeout(getFocus, 2);
+		    else if (msgbody.match("http://") != null || msgbody.match("<a href=") != null ){
+			dump("got url\n");
+			var nick =  XMPP.nickFor(message.session.name, XMPP.JID(message.stanza.@from).address);
+			showmsgpopup(nick, "probably has sent you a link");
+		    }
+		    else{
+			dump("got message\n");
+			
+			/* Check if msg body is longer than 20 chars and cut it */
+			if(msgbody.length > 40){
+			    
+			    msgbody = msgbody.substring(0,41) + " ...";
+			}
+			else msgbody;
+			
+			var nick =  XMPP.nickFor(message.session.name, XMPP.JID(message.stanza.@from).address);
+			showmsgpopup(nick, msgbody);
+			//setTimeout(getFocus, 2);
+		    }
 		}
 	    }
 	    else count = 0;
@@ -77,15 +82,16 @@ function init() {
 
 /* Show an alert popup and play a sound alert */
 function showmsgpopup(contact, text){
-    dump('count is: ' + count);
+    //    dump('count is: ' + count);
 
     //    if (count < 1){
-	alertService.showAlertNotification("chrome://notifyme/skin/logo96.png", contact, text, false, "", null);
+    
+    alertService.showAlertNotification("chrome://notifyme/skin/logo96.png", contact, text, false, "", null);
 	//count++;
 
 	// Check prefs to play / not to play a sound alert
-	sound = eval(pref.getCharPref('toggleSoundKey'));
-	if (sound) player.play(music);
+    sound = eval(pref.getCharPref('toggleSoundKey'));
+    if (sound) player.play(music);
 
 	//}
 }

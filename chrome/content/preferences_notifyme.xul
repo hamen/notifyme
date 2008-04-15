@@ -30,11 +30,14 @@
     </preferences>
 -->
     <groupbox>
-  <checkbox id="notifyme-toggle-sound-key"
-	  label="Play a sound on alert popup"
-	  oncommand="notifymePrefs.toggleSound(checked)"/>
-
-</groupbox>
+      <checkbox id="notifyme-toggle-popup-key"
+		label="Show an alert popup on incoming messages"
+		oncommand="notifymePrefs.togglePopup(checked)"/>
+    
+      <checkbox id="notifyme-toggle-sound-key"
+		label="Play a sound on alert popup"
+		oncommand="notifymePrefs.toggleSound(checked)"/>
+    </groupbox>
 
   </prefpane>
 </overlay>

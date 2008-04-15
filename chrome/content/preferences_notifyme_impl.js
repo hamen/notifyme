@@ -33,6 +33,7 @@ var pref = Cc['@mozilla.org/preferences-service;1']
 function init() {
     window.sizeToContent();
     displayKey('sound', eval(pref.getCharPref('toggleSoundKey')));
+    displayKey('popup', eval(pref.getCharPref('togglePopupKey')));
 }
 
 // UTILITIES
@@ -40,6 +41,9 @@ function init() {
 
 function toggleSound(status){
     saveKey('sound', status);
+}
+function togglePopup(status){
+    saveKey('popup', status);
 }
 
 function saveKey(which, desc) {
