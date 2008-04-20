@@ -91,8 +91,9 @@ function init() {
 		  // when firefox has no focus it still is MAXIMIZED
 		  dump("sidebar is expanded and window is maximized \n");
 		  }
-		  }
+		 
 		*/
+	    }
 	    
         });
 }
