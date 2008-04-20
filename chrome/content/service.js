@@ -44,11 +44,17 @@ function init() {
 	    direction : 'in',
 		}, function(message) {
 	    // Detect if sidebar is not Expanded and msg body is not blank
-	    if(isCompact() && message.stanza.body != undefined){
-		// Detect if somebody D&Ded you an image
+	    if(message.stanza.body == undefined){
+		// Fold
+	    }
+
+	    else if((isCompact()) || win.windowState == win.STATE_MINIMIZED){
 		msgbody = new String(message.stanza.body);
-	
+		
+		// Detect if users wants alert poput
 		popup = eval(pref.getCharPref('togglePopupKey'));
+		
+		// Detect if somebody D&Ded you an image or a link
 		if(popup){
 		    if(msgbody.match("image:") != null || msgbody.match("<img") != null ){
 			dump("got image\n");
@@ -61,9 +67,9 @@ function init() {
 			showmsgpopup(nick, "probably has sent you a link");
 		    }
 		    else{
-			dump("got message\n");
+			// dump("got message\n");
 			
-			/* Check if msg body is longer than 20 chars and cut it */
+			/* Check if msg body is longer than 40 chars and cut it */
 			if(msgbody.length > 40){
 			    
 			    msgbody = msgbody.substring(0,41) + " ...";
@@ -72,28 +78,43 @@ function init() {
 			
 			var nick =  XMPP.nickFor(message.session.name, XMPP.JID(message.stanza.@from).address);
 			showmsgpopup(nick, msgbody);
-			//setTimeout(getFocus, 2);
 		    }
 		}
 	    }
-	    else count = 0;
+	    
+	    else{
+		/*
+		  if (win.windowState == win.STATE_MINIMIZED) {
+		  // when firefox is on another desktop is MINIMIZED
+		  dump("sidebar is expanded and window is minimized \n");
+		  } else if (win.windowState == win.STATE_MAXIMIZED){
+		  // when firefox has no focus it still is MAXIMIZED
+		  dump("sidebar is expanded and window is maximized \n");
+		  }
+		  }
+		*/
+	    
         });
 }
 
 /* Show an alert popup and play a sound alert */
 function showmsgpopup(contact, text){
-    //    dump('count is: ' + count);
+	/*   
+	     if (win.windowState == win.STATE_MINIMIZED) {
+	     // when firefox is on another desktop is MINIMIZED
+	     dump("window is minimized \n");
+	     } else if (win.windowState == win.STATE_MAXIMIZED){
+	     // when firefox has no focus it still is MAXIMIZED
+	     dump("window is maximized \n");
+	     }
+	*/
 
-    //    if (count < 1){
-    
     alertService.showAlertNotification("chrome://notifyme/skin/logo96.png", contact, text, false, "", null);
-	//count++;
 
-	// Check prefs to play / not to play a sound alert
+    // Check prefs to play / not to play a sound alert
     sound = eval(pref.getCharPref('toggleSoundKey'));
     if (sound) player.play(music);
 
-	//}
 }
 
 function isCompact(){
