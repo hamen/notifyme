@@ -25,21 +25,58 @@ var music = ioservice.newURI ("chrome://notifyme/content/alert.wav" , "" , null 
 const ns_muc      = new Namespace('http://jabber.org/protocol/muc');
 const ns_muc_user = new Namespace('http://jabber.org/protocol/muc#user');
 const ns_composing = new Namespace('http://jabber.org/protocol/chatstates');
+const ns_roster     = 'jabber:iq:roster';
+const ns_x4m_in = 'http://hyperstruct.net/xmpp4moz/protocol/internal';
+const ns_vcard  = 'vcard-temp';
+const defaultAvatar = 'chrome://notifyme/skin/logo96.png';
 
 // ----------------------------------------------------------------------
+
 var count = 0;
 var win;
 var sound;
 var popup;
 
+var channel;
+var XMPP;
+var account;
+
+var roster;
+var avatar;
+var myreply;
+
 function init() {
     /* Make xmpp4moz available here */
     var env = {};
     loader.loadSubScript('chrome://xmpp4moz/content/xmpp.js', env);
-    var XMPP = env.XMPP;
-    
+    XMPP = env.XMPP;
 
-    XMPP.createChannel().on({
+    channel = XMPP.createChannel(
+				 <query xmlns="http://jabber.org/protocol/disco#info">
+				 <feature var="http://jabber.org/protocol/muc"/>
+				 <feature var="http://jabber.org/protocol/muc#user"/>
+				 <feature var="http://jabber.org/protocol/xhtml-im"/>
+				 <feature var="http://jabber.org/protocol/chatstates"/>
+				 </query>);    
+    /*    
+    var env2 = {};
+    loader.loadSubScript('chrome://sameplace/content/experimental/contacts.js', env2);
+    var SAMEPLACE = env2.SAMEPLACE;
+    */
+    /*
+    channel.on({
+	    event     : 'iq',
+		direction : 'in',
+		stanza    : function(s) {
+		return s.ns_roster::query != undefined;
+	    }
+	}, function(iq){
+	    //dump(iq.stanza);
+	    roster = iq;
+	});
+    */
+
+    channel.on({
 	    event     : 'message',
 	    direction : 'in',
 		}, function(message) {
@@ -50,7 +87,11 @@ function init() {
 
 	    else if((isCompact()) || win.windowState == win.STATE_MINIMIZED){
 		msgbody = new String(message.stanza.body);
-		
+		account = message.account;
+		var address = XMPP.JID(message.stanza.@from).address;
+		dump(address + " before getAvatar \n");
+		getAvatar(address);
+
 		// Detect if users wants alert poput
 		popup = eval(pref.getCharPref('togglePopupKey'));
 		
@@ -77,22 +118,14 @@ function init() {
 			else msgbody;
 			
 			var nick =  XMPP.nickFor(message.session.name, XMPP.JID(message.stanza.@from).address);
-			showmsgpopup(nick, msgbody);
+
+			showmsgpopup(nick, msgbody, avatar);
 		    }
 		}
 	    }
 	    
 	    else{
-		/*
-		  if (win.windowState == win.STATE_MINIMIZED) {
-		  // when firefox is on another desktop is MINIMIZED
-		  dump("sidebar is expanded and window is minimized \n");
-		  } else if (win.windowState == win.STATE_MAXIMIZED){
-		  // when firefox has no focus it still is MAXIMIZED
-		  dump("sidebar is expanded and window is maximized \n");
-		  }
-		 
-		*/
+		// Fold
 	    }
 	    
         });
@@ -100,17 +133,10 @@ function init() {
 
 /* Show an alert popup and play a sound alert */
 function showmsgpopup(contact, text){
-	/*   
-	     if (win.windowState == win.STATE_MINIMIZED) {
-	     // when firefox is on another desktop is MINIMIZED
-	     dump("window is minimized \n");
-	     } else if (win.windowState == win.STATE_MAXIMIZED){
-	     // when firefox has no focus it still is MAXIMIZED
-	     dump("window is maximized \n");
-	     }
-	*/
-
-    alertService.showAlertNotification("chrome://notifyme/skin/logo96.png", contact, text, false, "", null);
+    
+    //    alertService.showAlertNotification("chrome://notifyme/skin/logo96.png", contact, text, false, "", null);
+    alertService.showAlertNotification(avatar, contact, text, false, "", null);
+    avatar = defaultAvatar;
 
     // Check prefs to play / not to play a sound alert
     sound = eval(pref.getCharPref('toggleSoundKey'));
@@ -129,21 +155,6 @@ function isCompact(){
 }
 
 /*
-function show(title, availability, message) {
-    availability = availability || 'unavailable';
-
-    if(!this._busy) {
-        this._busy = true;
-        alertService.showAlertNotification(
-            'chrome://xmpp4moz/skin/status/' + availability + '.png',
-            title, message, false, 'JabBiff', this);
-    }
-}
-*/
-
-function getFocus(){
-    win.focus();
-}
 
 function observe(subject, topic, data) {
     if(data != 'JabBiff')
@@ -157,13 +168,27 @@ function observe(subject, topic, data) {
         break;
     }
 }
-
-/*
-
-Usare display_filters per le emoticon nell'alert
-
-bard:
-hanno la funzionalita` di base ma a te servira` produrre un oggetto xul <image> piuttosto che uno e4x <img>
-guarda se puoi prendere la translation testo->xml da li`, e la parte che genera lo xul dalla contact list (che lo fa per le url)
-
 */
+
+function getAvatar(address){
+    // address is something like hamen_testing2@sameplace.cc/Home
+    dump(address + " in getAvatar \n");
+    
+    XMPP.send(account,
+              <iq to={address} type='get'><vCard xmlns='vcard-temp'/><cache-control xmlns={ns_x4m_in}/></iq>,
+	      function(reply) {
+		  // dump(reply.stanza.toXMLString());
+		  myreply = reply;
+
+		  var photo = reply.stanza..ns_vcard::PHOTO;
+		  if(photo == undefined){
+		      dump("photo is undefined \n");
+		      avatar = defaultAvatar;
+		  }
+		  else avatar = 'data:' + photo.ns_vcard::TYPE + ';base64,' + photo.ns_vcard::BINVAL;
+	      });
+}
+
+
+
+
