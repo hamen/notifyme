@@ -22,7 +22,7 @@ var Cc = Components.classes;
 var Ci = Components.interfaces;
 var Cr = Components.results;
 
-var pref = Cc['@mozilla.org/preferences-service;1']
+const pref = Cc['@mozilla.org/preferences-service;1']
     .getService(Ci.nsIPrefService)
     .getBranch('extensions.notifyme.');
 
@@ -32,8 +32,8 @@ var pref = Cc['@mozilla.org/preferences-service;1']
 
 function init() {
     window.sizeToContent();
-    displayKey('sound', eval(pref.getCharPref('toggleSoundKey')));
-    displayKey('popup', eval(pref.getCharPref('togglePopupKey')));
+    displayKey('sound', eval(pref.getBoolPref('toggleSoundKey')));
+    displayKey('popup', eval(pref.getBoolPref('togglePopupKey')));
 }
 
 // UTILITIES
@@ -50,7 +50,7 @@ function saveKey(which, desc) {
     function capitalize(s) {
         return s.substr(0, 1).toUpperCase() + s.substr(1);
     }
-    pref.setCharPref('toggle' + capitalize(which) + 'Key', desc);
+    pref.setBoolPref('toggle' + capitalize(which) + 'Key', desc);
 }
 
 function displayKey(which, desc) {

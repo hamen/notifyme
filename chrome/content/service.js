@@ -58,24 +58,7 @@ function init() {
 				 <feature var="http://jabber.org/protocol/xhtml-im"/>
 				 <feature var="http://jabber.org/protocol/chatstates"/>
 				 </query>);    
-    /*    
-    var env2 = {};
-    loader.loadSubScript('chrome://sameplace/content/experimental/contacts.js', env2);
-    var SAMEPLACE = env2.SAMEPLACE;
-    */
-    /*
-    channel.on({
-	    event     : 'iq',
-		direction : 'in',
-		stanza    : function(s) {
-		return s.ns_roster::query != undefined;
-	    }
-	}, function(iq){
-	    //dump(iq.stanza);
-	    roster = iq;
-	});
-    */
-
+ 
     channel.on({
 	    event     : 'message',
 	    direction : 'in',
@@ -89,21 +72,21 @@ function init() {
 		msgbody = new String(message.stanza.body);
 		account = message.account;
 		var address = XMPP.JID(message.stanza.@from).address;
-		dump(address + " before getAvatar \n");
+		//dump(address + " before getAvatar \n");
 		getAvatar(address);
 
 		// Detect if users wants alert poput
-		popup = eval(pref.getCharPref('togglePopupKey'));
+		popup = eval(pref.getBoolPref('togglePopupKey'));
 		
 		// Detect if somebody D&Ded you an image or a link
 		if(popup){
 		    if(msgbody.match("image:") != null || msgbody.match("<img") != null ){
-			dump("got image\n");
+			//dump("got image\n");
 			var nick =  XMPP.nickFor(message.session.name, XMPP.JID(message.stanza.@from).address);
 			showmsgpopup(nick, "has sent you an image");
 		    }
 		    else if (msgbody.match("http://") != null || msgbody.match("<a href=") != null ){
-			dump("got url\n");
+			//dump("got url\n");
 			var nick =  XMPP.nickFor(message.session.name, XMPP.JID(message.stanza.@from).address);
 			showmsgpopup(nick, "probably has sent you a link");
 		    }
@@ -139,7 +122,7 @@ function showmsgpopup(contact, text){
     avatar = defaultAvatar;
 
     // Check prefs to play / not to play a sound alert
-    sound = eval(pref.getCharPref('toggleSoundKey'));
+    sound = eval(pref.getBoolPref('toggleSoundKey'));
     if (sound) player.play(music);
 
 }
@@ -171,8 +154,8 @@ function observe(subject, topic, data) {
 */
 
 function getAvatar(address){
-    // address is something like hamen_testing2@sameplace.cc/Home
-    dump(address + " in getAvatar \n");
+    // address is something like hamen_testing2@sameplace.cc
+    //dump(address + " in getAvatar \n");
     
     XMPP.send(account,
               <iq to={address} type='get'><vCard xmlns='vcard-temp'/><cache-control xmlns={ns_x4m_in}/></iq>,
@@ -182,13 +165,9 @@ function getAvatar(address){
 
 		  var photo = reply.stanza..ns_vcard::PHOTO;
 		  if(photo == undefined){
-		      dump("photo is undefined \n");
+		      //dump("photo is undefined \n");
 		      avatar = defaultAvatar;
 		  }
 		  else avatar = 'data:' + photo.ns_vcard::TYPE + ';base64,' + photo.ns_vcard::BINVAL;
 	      });
 }
-
-
-
-

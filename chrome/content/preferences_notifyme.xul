@@ -28,6 +28,8 @@
                   name="extensions.notifyme.toggleSoundKey"
                   type="bool"/>
     </preferences>
+
+pref("notifyme.togglePopupKey", true);
 -->
     <groupbox>
       <checkbox id="notifyme-toggle-popup-key"
