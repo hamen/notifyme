@@ -10,7 +10,7 @@ const alertService = Components
 const loader = Cc['@mozilla.org/moz/jssubscript-loader;1']
     .getService(Ci.mozIJSSubScriptLoader);
 
-/* SHOULD ENABLE TO READ/WRITE FIREFOX PREFS */
+/* Initialize interfaces to manage prefs */
 const pref = Components
     .classes["@mozilla.org/preferences-service;1"]
     .getService(Components.interfaces.nsIPrefService)
@@ -46,6 +46,12 @@ var avatar;
 var myreply;
 
 function init() {
+    /* Check if an old version left prefs type as String and fix it to Boolean*/
+    if (pref.getPrefType('togglePopupKey') != "128" || pref.getPrefType('toggleSoundKey') != "128" ){
+	//dump("PREF_BOOL");
+	pref.deleteBranch("");
+    }
+
     /* Make xmpp4moz available here */
     var env = {};
     loader.loadSubScript('chrome://xmpp4moz/content/xmpp.js', env);
