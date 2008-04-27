@@ -73,14 +73,22 @@ function init() {
 	    if(message.stanza.body == undefined){
 		// Fold
 	    }
+	    
 	    // Detects if sidebar is not Expanded OR Firefox is minimized OR Firefox is another desktop
 	    else if((isCompact()) || win.windowState == win.STATE_MINIMIZED){
 		msgbody = new String(message.stanza.body);
 		account = message.account;
 		var address = XMPP.JID(message.stanza.@from).address;
-		
+
+		// Detects if message comes from a room and obtain contact nick by resourse
+		if(message.stanza.@type == "groupchat"){
+		    var nick = XMPP.JID(message.stanza.@from).resource + " from " + XMPP.JID(message.stanza.@from).address;
+		}
+		else{
 		// Obtain contact nick as you aliased it in your contact list, i.e. Ivan for imorgillo@sameplace.cc
-		var nick =  XMPP.nickFor(message.session.name, XMPP.JID(message.stanza.@from).address);
+		    var nick = XMPP.nickFor(message.session.name, XMPP.JID(message.stanza.@from).address);
+		}
+				
 		getAvatar(address);
 
 		// Detects if users wants alert poput
