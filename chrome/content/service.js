@@ -30,9 +30,7 @@ const ns_x4m_in = 'http://hyperstruct.net/xmpp4moz/protocol/internal';
 const ns_vcard  = 'vcard-temp';
 const defaultAvatar = 'chrome://notifyme/skin/logo96.png';
 
-// ----------------------------------------------------------------------
-
-var count = 0;
+/* Global vars */
 var win;
 var sound;
 var popup;
@@ -42,8 +40,10 @@ var XMPP;
 var account;
 
 var roster;
-var avatar;
-var myreply;
+var avatar = defaultAvatar;
+
+// ----------------------------------------------------------------------
+
 
 function init() {
     /* Check if an old version left prefs type as String and fix it to Boolean*/
@@ -69,45 +69,34 @@ function init() {
 	    event     : 'message',
 	    direction : 'in',
 		}, function(message) {
-	    // Detect if sidebar is not Expanded and msg body is not blank
+	    // Detects if msg body is not blank
 	    if(message.stanza.body == undefined){
 		// Fold
 	    }
-
+	    // Detects if sidebar is not Expanded OR Firefox is minimized OR Firefox is another desktop
 	    else if((isCompact()) || win.windowState == win.STATE_MINIMIZED){
 		msgbody = new String(message.stanza.body);
 		account = message.account;
 		var address = XMPP.JID(message.stanza.@from).address;
-		//dump(address + " before getAvatar \n");
+		
+		// Obtain contact nick as you aliased it in your contact list, i.e. Ivan for imorgillo@sameplace.cc
+		var nick =  XMPP.nickFor(message.session.name, XMPP.JID(message.stanza.@from).address);
 		getAvatar(address);
 
-		// Detect if users wants alert poput
+		// Detects if users wants alert poput
 		popup = eval(pref.getBoolPref('togglePopupKey'));
 		
-		// Detect if somebody D&Ded you an image or a link
+		// Detects if somebody D&Ded you an image or a link
 		if(popup){
 		    if(msgbody.match("image:") != null || msgbody.match("<img") != null ){
-			//dump("got image\n");
-			var nick =  XMPP.nickFor(message.session.name, XMPP.JID(message.stanza.@from).address);
 			showmsgpopup(nick, "has sent you an image");
 		    }
 		    else if (msgbody.match("http://") != null || msgbody.match("<a href=") != null ){
-			//dump("got url\n");
-			var nick =  XMPP.nickFor(message.session.name, XMPP.JID(message.stanza.@from).address);
 			showmsgpopup(nick, "probably has sent you a link");
 		    }
 		    else{
-			// dump("got message\n");
-			
-			/* Check if msg body is longer than 40 chars and cut it */
-			if(msgbody.length > 40){
-			    
-			    msgbody = msgbody.substring(0,41) + " ...";
-			}
-			else msgbody;
-			
-			var nick =  XMPP.nickFor(message.session.name, XMPP.JID(message.stanza.@from).address);
-
+			/* Checks if msg body is longer than 40 chars and cuts it */
+			if(msgbody.length > 40) msgbody = msgbody.substring(0,41) + " ...";
 			showmsgpopup(nick, msgbody, avatar);
 		    }
 		}
@@ -123,20 +112,20 @@ function init() {
 /* Show an alert popup and play a sound alert */
 function showmsgpopup(contact, text){
     
-    //    alertService.showAlertNotification("chrome://notifyme/skin/logo96.png", contact, text, false, "", null);
     alertService.showAlertNotification(avatar, contact, text, false, "", null);
+    
+    // Force avatar to default avatar due a lag in avatar update
     avatar = defaultAvatar;
 
     // Check prefs to play / not to play a sound alert
     sound = eval(pref.getBoolPref('toggleSoundKey'));
     if (sound) player.play(music);
-
 }
+
 
 function isCompact(){
 
     var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
-    
     // MEMO: Specifing navigator:browser Notify me won't work with Thunderbird
     win = wm.getMostRecentWindow("navigator:browser");
     if(win.sameplace.isCompact()) return true;
@@ -144,6 +133,7 @@ function isCompact(){
 }
 
 /*
+// Jabiff legacy. It could be usefull in the future.
 
 function observe(subject, topic, data) {
     if(data != 'JabBiff')
@@ -161,17 +151,13 @@ function observe(subject, topic, data) {
 
 function getAvatar(address){
     // address is something like hamen_testing2@sameplace.cc
-    //dump(address + " in getAvatar \n");
-    
+
     XMPP.send(account,
               <iq to={address} type='get'><vCard xmlns='vcard-temp'/><cache-control xmlns={ns_x4m_in}/></iq>,
 	      function(reply) {
-		  // dump(reply.stanza.toXMLString());
-		  myreply = reply;
 
 		  var photo = reply.stanza..ns_vcard::PHOTO;
 		  if(photo == undefined){
-		      //dump("photo is undefined \n");
 		      avatar = defaultAvatar;
 		  }
 		  else avatar = 'data:' + photo.ns_vcard::TYPE + ';base64,' + photo.ns_vcard::BINVAL;

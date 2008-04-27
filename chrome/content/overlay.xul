@@ -18,7 +18,7 @@
 -->
 
 
-<?xml-stylesheet href="chrome://helloworld/skin/overlay.css" type="text/css"?>
+<?xml-stylesheet href="chrome://notifyme/skin/overlay.css" type="text/css"?>
 <!DOCTYPE overlay SYSTEM "chrome://notifyme/locale/overlay.dtd">
 
 <overlay id="notifyme-overlay"
@@ -33,8 +33,9 @@
 
   <!-- MENUS -->
   <popup id="contact-popup">
+    <menuseparator/>
     <menuitem label="Notify me"
-              oncommand="Dialog.notifyMe(document.popupNode);"/>      
+	      oncommand="Dialog.notifyMe(document.popupNode);"/>
   </popup>
 
 <prefwindow id="sameplace-preferences">
