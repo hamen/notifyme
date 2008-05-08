@@ -34,6 +34,7 @@ function init() {
     window.sizeToContent();
     displayKey('sound', eval(pref.getBoolPref('toggleSoundKey')));
     displayKey('popup', eval(pref.getBoolPref('togglePopupKey')));
+    displayKey('rooms', eval(pref.getBoolPref('toggleRoomsKey')));
 }
 
 // UTILITIES
@@ -44,6 +45,9 @@ function toggleSound(status){
 }
 function togglePopup(status){
     saveKey('popup', status);
+}
+function toggleRoomsPopup(status){
+    saveKey('rooms', status);
 }
 
 function saveKey(which, desc) {
@@ -59,4 +63,12 @@ function displayKey(which, desc) {
 
 function _(id) {
     return document.getElementById('notifyme-' + id);''
+}
+
+function rooms(event){
+        
+    //    alert(event.target.getAttribute("checked"));
+    //    if (event.target.getAttribute("checked") == "true") alert('is true');
+    //    status = "true";
+    //toggleRoomsPopup(status);
 }

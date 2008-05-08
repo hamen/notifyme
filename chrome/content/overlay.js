@@ -110,30 +110,12 @@ function detectedContact(presence, checkboxes, address, counts) {
 // AlertNotification has user alias as title
 function showStatusPopup(contact, status){
 
-alertsService.showAlertNotification("chrome://notifyme/skin/logo96.png", 
-                                    contact, "has changed status to " + status, 
-                                    false, "", null);
+    //    alert(document.hasFocus());
+
+    alertsService.showAlertNotification("chrome://notifyme/skin/logo96.png", 
+					contact, "has changed status to " + status, 
+					false, "", null);
 }
-
-/*
-function showMsgPopup(contact, text){
-
-alertsService.showAlertNotification("chrome://notifyme/skin/logo96.png", 
-                                    contact, text, 
-                                    false, "", null);
-}
-
-
-function watchonMsgs(){
-    alert('watching');
-    channel.on({
-	    event     : 'message',
-	    direction : 'in',
-		}, function(message) {
-            if(isCompact()) showMsgPopup(message.account, message.stanza.body);
-        });
-}
-*/
 
 function watchonUser(contact, boxes, counts){
 // Start to sniff the channel
@@ -149,25 +131,3 @@ function watchonUser(contact, boxes, counts){
 	    var nick =  XMPP.nickFor(presence.session.name, XMPP.JID(presence.stanza.@from).address);
 	    detectedContact(presence, boxes, nick, counts); });
 }
-
-/*
-function isCompact(){
-//   Recognize sidebar status
-    var view = document.getElementById('view');
-    if(util.hasClass(view, 'compact')) return true;
-    else return false;
-}
-*/
-/*
-
-  Recognize sidebar status:
- 
-  var view = document.getElementById('view');
-    
-  if(util.hasClass(view, 'compact'))
-  alert('SP sidebar is: compact, i.e. close or avatar only mode');
-  else
-  alert('SP sidebar is expanded');
-
-  
-*/

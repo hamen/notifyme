@@ -21,21 +21,27 @@
 <!DOCTYPE overlay SYSTEM "chrome://notifyme/locale/overlay.dtd">
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  <prefpane id="notifyme-pane">
-<!--
-    <preferences>
-      <preference id="notifyme-toggle-sound-key"
-                  name="extensions.notifyme.toggleSoundKey"
-                  type="bool"/>
-    </preferences>
+  <script src="preferences_notifyme.js"/>
 
-pref("notifyme.togglePopupKey", true);
+<!--
+  <popup id="conversation-menu">
+    <menuitem label="Enable notifications from rooms"
+	      accesskey="N"
+	      type="checkbox"
+	      oncommand="notifymePrefs.rooms(event);"/>
+  </popup>
 -->
-    <groupbox>
-      <checkbox id="notifyme-toggle-popup-key"
+
+<prefpane id="notifyme-pane">
+  <groupbox>
+    <checkbox id="notifyme-toggle-popup-key"
 		label="Show an alert popup on incoming messages"
 		oncommand="notifymePrefs.togglePopup(checked)"/>
-    
+
+      <checkbox id="notifyme-toggle-rooms-key"
+		label="Show an alert popup on incoming messages from rooms"
+		oncommand="notifymePrefs.toggleRoomsPopup(checked)"/>
+
       <checkbox id="notifyme-toggle-sound-key"
 		label="Play a sound on alert popup"
 		oncommand="notifymePrefs.toggleSound(checked)"/>

@@ -34,6 +34,7 @@ const defaultAvatar = 'chrome://notifyme/skin/logo96.png';
 var win;
 var sound;
 var popup;
+var roomspopup;
 
 var channel;
 var XMPP;
@@ -46,9 +47,12 @@ var avatar = defaultAvatar;
 
 
 function init() {
+    // Component loading check
+    dump("XPCOM Component has been loaded \n");
+
     /* Check if an old version left prefs type as String and fix it to Boolean*/
-    if (pref.getPrefType('togglePopupKey') != "128" || pref.getPrefType('toggleSoundKey') != "128" ){
-	//dump("PREF_BOOL");
+    if (pref.getPrefType('togglePopupKey') != "128" || pref.getPrefType('toggleSoundKey') != "128"  ){
+	
 	pref.deleteBranch("");
     }
 
@@ -57,6 +61,9 @@ function init() {
     loader.loadSubScript('chrome://xmpp4moz/content/xmpp.js', env);
     XMPP = env.XMPP;
 
+    /* Use another loader to load an external script with */
+    // PUT LOADER HERE
+    
     channel = XMPP.createChannel(
 				 <query xmlns="http://jabber.org/protocol/disco#info">
 				 <feature var="http://jabber.org/protocol/muc"/>
@@ -71,53 +78,91 @@ function init() {
 		}, function(message) {
 	    // Detects if msg body is not blank
 	    if(message.stanza.body == undefined){
-		// Fold
+		//dump("message.stanza.body == undefined \n");
 	    }
 	    
 	    // Detects if sidebar is not Expanded OR Firefox is minimized OR Firefox is another desktop
-	    else if((isCompact()) || win.windowState == win.STATE_MINIMIZED){
+	    else if((isCompact()) || win.windowState == win.STATE_MINIMIZED || !(win.document.hasFocus && win.document.hasFocus())){
 		msgbody = new String(message.stanza.body);
 		account = message.account;
 		var address = XMPP.JID(message.stanza.@from).address;
+		
+		/* Focus testing 
+		focused = win.document.hasFocus();
+		if(focused) dump("FOCUSED \n");
+		else dump("NOT FOCUSED \n");
+		*/
+
+		// Detects if users wants alert popups
+		popup = eval(pref.getBoolPref('togglePopupKey'));
+		roomspopup = eval(pref.getBoolPref('toggleRoomsKey'));
 
 		// Detects if message comes from a room and obtain contact nick by resourse
-		if(message.stanza.@type == "groupchat"){
+		if(message.stanza.@type == "groupchat" && roomspopup){
 		    var nick = XMPP.JID(message.stanza.@from).resource + " from " + XMPP.JID(message.stanza.@from).address;
-		}
-		else{
-		// Obtain contact nick as you aliased it in your contact list, i.e. Ivan for imorgillo@sameplace.cc
-		    var nick = XMPP.nickFor(message.session.name, XMPP.JID(message.stanza.@from).address);
-		}
-				
-		getAvatar(address);
+		    getAvatar(address);
 
-		// Detects if users wants alert poput
-		popup = eval(pref.getBoolPref('togglePopupKey'));
-		
-		// Detects if somebody D&Ded you an image or a link
-		if(popup){
 		    if(msgbody.match("image:") != null || msgbody.match("<img") != null ){
 			showmsgpopup(nick, "has sent you an image");
 		    }
 		    else if (msgbody.match("http://") != null || msgbody.match("<a href=") != null ){
-			showmsgpopup(nick, "probably has sent you a link");
+			showmsgpopup(nick, "has sent you a link");
 		    }
 		    else{
 			/* Checks if msg body is longer than 40 chars and cuts it */
 			if(msgbody.length > 40) msgbody = msgbody.substring(0,41) + " ...";
 			showmsgpopup(nick, msgbody, avatar);
-		    }
+			
+    		    }
+
 		}
+		else if(message.stanza.@type == "chat" && popup){
+		// Obtain contact nick as you aliased it in your contact list, i.e. Ivan for imorgillo@sameplace.cc
+		    var nick = XMPP.nickFor(message.session.name, XMPP.JID(message.stanza.@from).address);
+		    getAvatar(address);
+		    
+		    if(msgbody.match("image:") != null || msgbody.match("<img") != null ){
+			showmsgpopup(nick, "has sent you an image");
+		    }
+		    else if (msgbody.match("http://") != null || msgbody.match("<a href=") != null ){
+			showmsgpopup(nick, "has sent you a link");
+		    }
+		    else{
+			/* Checks if msg body is longer than 40 chars and cuts it */
+			if(msgbody.length > 40) msgbody = msgbody.substring(0,41) + " ...";
+			showmsgpopup(nick, msgbody, avatar);
+			
+    		    }
+		}
+		/*	
+		// Detects if somebody D&Ded you an image or a link
+		if(popup || roomspopup){
+		    if(msgbody.match("image:") != null || msgbody.match("<img") != null ){
+			showmsgpopup(nick, "has sent you an image");
+		    }
+		    else if (msgbody.match("http://") != null || msgbody.match("<a href=") != null ){
+			showmsgpopup(nick, "has sent you a link");
+		    }
+		    else{
+			/* Checks if msg body is longer than 40 chars and cuts it 
+			if(msgbody.length > 40) msgbody = msgbody.substring(0,41) + " ...";
+			showmsgpopup(nick, msgbody, avatar);
+			
+    		    }
+
+		}
+		*/
 	    }
 	    
 	    else{
-		// Fold
+		//dump("Sidebar is exanded or Firefox is on this desktop \n");
 	    }
 	    
         });
 }
 
 /* Show an alert popup and play a sound alert */
+
 function showmsgpopup(contact, text){
     
     alertService.showAlertNotification(avatar, contact, text, false, "", null);
