@@ -65,6 +65,7 @@ function _(id) {
     return document.getElementById('notifyme-' + id);''
 }
 
+/*
 function rooms(event){
         
     //    alert(event.target.getAttribute("checked"));
@@ -72,3 +73,4 @@ function rooms(event){
     //    status = "true";
     //toggleRoomsPopup(status);
 }
+*/

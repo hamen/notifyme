@@ -81,18 +81,15 @@ function init() {
 		//dump("message.stanza.body == undefined \n");
 	    }
 	    
-	    // Detects if sidebar is not Expanded OR Firefox is minimized OR Firefox is another desktop
+	    /* Detects if sidebar is not Expanded OR
+	       Firefox is minimized OR
+	       Firefox is another desktop OR
+	       Firefox is on current desktop but behind others windows */
 	    else if((isCompact()) || win.windowState == win.STATE_MINIMIZED || !(win.document.hasFocus && win.document.hasFocus())){
 		msgbody = new String(message.stanza.body);
 		account = message.account;
 		var address = XMPP.JID(message.stanza.@from).address;
 		
-		/* Focus testing 
-		focused = win.document.hasFocus();
-		if(focused) dump("FOCUSED \n");
-		else dump("NOT FOCUSED \n");
-		*/
-
 		// Detects if users wants alert popups
 		popup = eval(pref.getBoolPref('togglePopupKey'));
 		roomspopup = eval(pref.getBoolPref('toggleRoomsKey'));
@@ -101,81 +98,40 @@ function init() {
 		if(message.stanza.@type == "groupchat" && roomspopup){
 		    var nick = XMPP.JID(message.stanza.@from).resource + " from " + XMPP.JID(message.stanza.@from).address;
 		    getAvatar(address);
-
-		    if(msgbody.match("image:") != null || msgbody.match("<img") != null ){
-			showmsgpopup(nick, "has sent you an image");
-		    }
-		    else if (msgbody.match("http://") != null || msgbody.match("<a href=") != null ){
-			showmsgpopup(nick, "has sent you a link");
-		    }
-		    else{
-			/* Checks if msg body is longer than 40 chars and cuts it */
-			if(msgbody.length > 40) msgbody = msgbody.substring(0,41) + " ...";
-			showmsgpopup(nick, msgbody, avatar);
-			
-    		    }
-
+		    
+		    composeAndSend(nick, msgbody, avatar);
 		}
+		
 		else if(message.stanza.@type == "chat" && popup){
-		// Obtain contact nick as you aliased it in your contact list, i.e. Ivan for imorgillo@sameplace.cc
+		// Obtains contact nick as you aliased it in your contact list, i.e. Ivan for imorgillo@sameplace.cc
 		    var nick = XMPP.nickFor(message.session.name, XMPP.JID(message.stanza.@from).address);
 		    getAvatar(address);
 		    
-		    if(msgbody.match("image:") != null || msgbody.match("<img") != null ){
-			showmsgpopup(nick, "has sent you an image");
-		    }
-		    else if (msgbody.match("http://") != null || msgbody.match("<a href=") != null ){
-			showmsgpopup(nick, "has sent you a link");
-		    }
-		    else{
-			/* Checks if msg body is longer than 40 chars and cuts it */
-			if(msgbody.length > 40) msgbody = msgbody.substring(0,41) + " ...";
-			showmsgpopup(nick, msgbody, avatar);
-			
-    		    }
+		    composeAndSend(nick, msgbody, avatar);
 		}
-		/*	
-		// Detects if somebody D&Ded you an image or a link
-		if(popup || roomspopup){
-		    if(msgbody.match("image:") != null || msgbody.match("<img") != null ){
-			showmsgpopup(nick, "has sent you an image");
-		    }
-		    else if (msgbody.match("http://") != null || msgbody.match("<a href=") != null ){
-			showmsgpopup(nick, "has sent you a link");
-		    }
-		    else{
-			/* Checks if msg body is longer than 40 chars and cuts it 
-			if(msgbody.length > 40) msgbody = msgbody.substring(0,41) + " ...";
-			showmsgpopup(nick, msgbody, avatar);
-			
-    		    }
-
-		}
-		*/
 	    }
 	    
 	    else{
-		//dump("Sidebar is exanded or Firefox is on this desktop \n");
+		//dump("Sidebar is exanded \n");
 	    }
 	    
         });
 }
 
 /* Show an alert popup and play a sound alert */
-
 function showmsgpopup(contact, text){
     
     alertService.showAlertNotification(avatar, contact, text, false, "", null);
     
-    // Force avatar to default avatar due a lag in avatar update
+    // Forces avatar to default avatar due a lag in avatar update
     avatar = defaultAvatar;
 
-    // Check prefs to play / not to play a sound alert
+    // Checks prefs to play / not to play a sound alert
     sound = eval(pref.getBoolPref('toggleSoundKey'));
     if (sound) player.play(music);
 }
 
-
+/* Detects if Sidebar is not expanded */
 function isCompact(){
 
     var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
@@ -215,4 +171,20 @@ function getAvatar(address){
 		  }
 		  else avatar = 'data:' + photo.ns_vcard::TYPE + ';base64,' + photo.ns_vcard::BINVAL;
 	      });
+}
+
+// Detects if somebody sent you a link, an image or a long message
+function composeAndSend(nick, body, avatar){
+
+    if(body.match("image:") != null || body.match("<img") != null ){
+	showmsgpopup(nick, "has sent you an image");
+    }
+    else if (body.match("http://") != null || body.match("<a href=") != null ){
+	showmsgpopup(nick, "has sent you a link");
+    }
+    else{
+	/* Checks if msg body is longer than 50 chars and cuts it */
+	if(body.length > 50) body = body.substring(0,41) + " ...";
+	showmsgpopup(nick, body, avatar);
+    }
 }
