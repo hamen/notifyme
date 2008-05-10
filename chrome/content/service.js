@@ -1,10 +1,24 @@
+/*
+  This file is part of 'Notify me' (SamePlace addon).
+
+  'Notify me' is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License,
+  or any later version.
+  
+  'Notify me' is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with 'Notify me'.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 // GLOBAL DEFINITIONS
 // ----------------------------------------------------------------------
 
-/* Inizialize popup alert */
-const alertService = Components
-    .classes['@mozilla.org/alerts-service;1']
-    .getService(Components.interfaces.nsIAlertsService);
+
 
 /* Enable external scripts import */
 const loader = Cc['@mozilla.org/moz/jssubscript-loader;1']
@@ -16,10 +30,7 @@ const pref = Components
     .getService(Components.interfaces.nsIPrefService)
     .getBranch('extensions.notifyme.');
 
-/* Initialize interfaces to play a sound alert*/
-var player = Components.classes["@mozilla.org/sound;1"].createInstance(Components.interfaces.nsISound) ;
-var ioservice = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService) ;
-var music = ioservice.newURI ("chrome://notifyme/content/alert.wav" , "" , null ) ; 
+
 
 /* NameSpaces */
 const ns_muc      = new Namespace('http://jabber.org/protocol/muc');
@@ -39,9 +50,10 @@ var roomspopup;
 var channel;
 var XMPP;
 var account;
+var util = {};
 
 var roster;
-var avatar = defaultAvatar;
+var avatar;
 
 // ----------------------------------------------------------------------
 
@@ -50,19 +62,19 @@ function init() {
     // Component loading check
     dump("XPCOM Component has been loaded \n");
 
-    /* Check if an old version left prefs type as String and fix it to Boolean*/
+    /* Checks if an old version left prefs type as String and fix it to Boolean*/
     if (pref.getPrefType('togglePopupKey') != "128" || pref.getPrefType('toggleSoundKey') != "128"  ){
 	
 	pref.deleteBranch("");
     }
 
-    /* Make xmpp4moz available here */
+    // Makes xmpp4moz available here 
     var env = {};
     loader.loadSubScript('chrome://xmpp4moz/content/xmpp.js', env);
     XMPP = env.XMPP;
 
-    /* Use another loader to load an external script with */
-    // PUT LOADER HERE
+    // Makes utils.js available here    
+    loader.loadSubScript('chrome://notifyme/content/lib/util_impl.js', util);
     
     channel = XMPP.createChannel(
 				 <query xmlns="http://jabber.org/protocol/disco#info">
@@ -84,20 +96,21 @@ function init() {
 	    /* Detects if sidebar is not Expanded OR
 	       Firefox is minimized OR
 	       Firefox is another desktop OR
-	       Firefox is on current desktop but behind others windows */
+	       Firefox is on current desktop but behind others windows (Firefox 3 only) */
 	    else if((isCompact()) || win.windowState == win.STATE_MINIMIZED || !(win.document.hasFocus && win.document.hasFocus())){
 		msgbody = new String(message.stanza.body);
 		account = message.account;
 		var address = XMPP.JID(message.stanza.@from).address;
 		
-		// Detects if users wants alert popups
+		// Detects if users wants alert popups AND/OR sound.
 		popup = eval(pref.getBoolPref('togglePopupKey'));
 		roomspopup = eval(pref.getBoolPref('toggleRoomsKey'));
+		sound = eval(pref.getBoolPref('toggleSoundKey'));
 
 		// Detects if message comes from a room and obtain contact nick by resourse
 		if(message.stanza.@type == "groupchat" && roomspopup){
 		    var nick = XMPP.JID(message.stanza.@from).resource + " from " + XMPP.JID(message.stanza.@from).address;
-		    getAvatar(address);
+		    avatar = util.getAvatar(account, address, XMPP);
 		    
 		    composeAndSend(nick, msgbody, avatar);
 		}
@@ -105,7 +118,7 @@ function init() {
 		else if(message.stanza.@type == "chat" && popup){
 		// Obtains contact nick as you aliased it in your contact list, i.e. Ivan for imorgillo@sameplace.cc
 		    var nick = XMPP.nickFor(message.session.name, XMPP.JID(message.stanza.@from).address);
-		    getAvatar(address);
+		    avatar = util.getAvatar(account, address, XMPP);
 		    
 		    composeAndSend(nick, msgbody, avatar);
 		}
@@ -118,18 +131,6 @@ function init() {
         });
 }
 
-/* Show an alert popup and play a sound alert */
-function showmsgpopup(contact, text){
-    
-    alertService.showAlertNotification(avatar, contact, text, false, "", null);
-    
-    // Forces avatar to default avatar due a lag in avatar update
-    avatar = defaultAvatar;
-
-    // Checks prefs to play / not to play a sound alert
-    sound = eval(pref.getBoolPref('toggleSoundKey'));
-    if (sound) player.play(music);
-}
 
 /* Detects if Sidebar is not expanded */
 function isCompact(){
@@ -158,33 +159,19 @@ function observe(subject, topic, data) {
 }
 */
 
-function getAvatar(address){
-    // address is something like hamen_testing2@sameplace.cc
-
-    XMPP.send(account,
-              <iq to={address} type='get'><vCard xmlns='vcard-temp'/><cache-control xmlns={ns_x4m_in}/></iq>,
-	      function(reply) {
-
-		  var photo = reply.stanza..ns_vcard::PHOTO;
-		  if(photo == undefined){
-		      avatar = defaultAvatar;
-		  }
-		  else avatar = 'data:' + photo.ns_vcard::TYPE + ';base64,' + photo.ns_vcard::BINVAL;
-	      });
-}
 
 // Detects if somebody sent you a link, an image or a long message
 function composeAndSend(nick, body, avatar){
 
     if(body.match("image:") != null || body.match("<img") != null ){
-	showmsgpopup(nick, "has sent you an image");
+	util.showmsgpopup(avatar, nick, "has sent you an image", sound);
     }
     else if (body.match("http://") != null || body.match("<a href=") != null ){
-	showmsgpopup(nick, "has sent you a link");
+	util.showmsgpopup(avatar, nick, "has sent you a link", sound);
     }
     else{
 	/* Checks if msg body is longer than 50 chars and cuts it */
 	if(body.length > 50) body = body.substring(0,41) + " ...";
-	showmsgpopup(nick, body, avatar);
+	util.showmsgpopup(avatar, nick, body, sound);
     }
 }
