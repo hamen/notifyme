@@ -13,40 +13,30 @@
   
   You should have received a copy of the GNU General Public License
   along with 'Notify me'.  If not, see <http://www.gnu.org/licenses/>.
+
+  Ivan Morgillo < imorgillo [at] sanniolug [dot] org >
+
 */
 
 var Dialog = {
   onLoad: function init() {
     // initialization code
     this.initialized = true;
-    
-    var env = {};
-    //    loader.loadSubScript('chrome://xmpp4moz/content/xmpp.js', env);
-    // var XMPP = env.XMPP;
-    
     },
 
   notifyMe: function showDialog(xulPopupNode) {
-	// Get clicked contact JID address
+	// Gets clicked contact JID address
 	var xulContact = $(xulPopupNode, '^ .contact');
 	var address = xulContact.getAttribute('address');
-	//alert('address is: ' + address);
-
-
-	// Open Dialog and pass it clicked contact JID address 
+	
+	// Opens Dialog and passes clicked contact JID address to it 
 	var params = {inn:{address:address, online:false, offline:false, away:false, busy:false}, out:null};
 	var checkboxes;
 
 	window.openDialog("chrome://notifyme/content/dialog.xul", "",
 			  "chrome, dialog, modal, resizable=yes", params).focus();
 	if (params.out) {
-	    // User clicked ok. Process changed arguments;
-	    /*alert('Got out params \n online checkbox is: ' + params.out.online
-		  + '\n offline is: ' +params.out.offline
-		  + '\n away is: ' + params.out.away
-		  + '\n busy is: ' + params.out.busy);
-	    */
-
+	    
 	    var boxes = params.out;
 	    var counts = {offline:0, online:0, away:0, busy:0};
 	    
@@ -56,7 +46,6 @@ var Dialog = {
 	    counts.away = 0;
 	    counts.busy = 0;
 
-	    // watchonMsgs();
 	    watchonUser(address, boxes, counts);
 	}
 	else {
@@ -65,9 +54,17 @@ var Dialog = {
     }
 };
 
+// GLOBALS
+const loader = Cc['@mozilla.org/moz/jssubscript-loader;1']
+    .getService(Ci.mozIJSSubScriptLoader);
+
 var alertsService = Components.classes["@mozilla.org/alerts-service;1"]
                               .getService(Components.interfaces.nsIAlertsService);
+// EXTERNAL SCRIPTS
+var utils = {};
+loader.loadSubScript('chrome://notifyme/content/lib/util_impl.js', utils);
 
+// ------------------------------------------------------------------------
 
 window.addEventListener("load", function(e) {
 	
@@ -83,38 +80,30 @@ window.addEventListener("load", function(e) {
 
 
 function detectedContact(presence, checkboxes, address, counts) {
-    
+    var text;
+    var account = presence.account;
+    var avatar = utils.getAvatar(account, XMPP.JID(presence.stanza.@from).address, XMPP);
     
     if(presence.stanza.@type == 'unavailable' && checkboxes.offline && counts.offline < 1){
-	showStatusPopup(address, 'offline');
+	utils.showmsgpopup(avatar, address, "has changed status to UNAVAILABLE", false);	
 	counts.offline = 1;
-	window.getAttention();
     }
     else if (presence.stanza.show == 'away' && checkboxes.away == true && counts.away < 1){
-	showStatusPopup(address, 'away');
+	utils.showmsgpopup(avatar, address, "has changed status to AWAY", false);	
 	counts.away = 1;
-	window.getAttention();
     }
     else if (presence.stanza.show == 'dnd' && checkboxes.busy && counts.busy < 1){
-	showStatusPopup(address, 'busy');
+	utils.showmsgpopup(avatar, address, "has changed status to BUSY", false);	
 	counts.busy = 1;
-	window.getAttention();
     }
-    else if (presence.stanza.@type == undefined && presence.stanza.show != 'dnd' && presence.stanza.show != 'away' && checkboxes.online && counts.online < 1){
-	showStatusPopup(address, 'online');
+    else if (presence.stanza.@type == undefined &&
+	     presence.stanza.show != 'dnd' &&
+	     presence.stanza.show != 'away' &&
+	     checkboxes.online && counts.online < 1){
+	utils.showmsgpopup(avatar, address, "has changed status to AVAILABLE", false);	
 	counts.online = 1;
-	window.getAttention();
     }
-}
-
-// AlertNotification has user alias as title
-function showStatusPopup(contact, status){
-
-    //    alert(document.hasFocus());
-
-    alertsService.showAlertNotification("chrome://notifyme/skin/logo96.png", 
-					contact, "has changed status to " + status, 
-					false, "", null);
+    window.getAttention();
 }
 
 function watchonUser(contact, boxes, counts){

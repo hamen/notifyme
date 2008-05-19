@@ -13,6 +13,8 @@
   
   You should have received a copy of the GNU General Public License
   along with 'Notify me'.  If not, see <http://www.gnu.org/licenses/>.
+
+  Ivan Morgillo < imorgillo [at] sanniolug [dot] org >
 */
 
 var util = {};

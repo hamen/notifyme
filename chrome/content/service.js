@@ -13,6 +13,8 @@
   
   You should have received a copy of the GNU General Public License
   along with 'Notify me'.  If not, see <http://www.gnu.org/licenses/>.
+
+  Ivan Morgillo < imorgillo [at] sanniolug [dot] org >
 */
 
 // GLOBAL DEFINITIONS
@@ -30,27 +32,21 @@ const pref = Components
     .getService(Components.interfaces.nsIPrefService)
     .getBranch('extensions.notifyme.');
 
-
-
 /* NameSpaces */
 const ns_muc      = new Namespace('http://jabber.org/protocol/muc');
 const ns_muc_user = new Namespace('http://jabber.org/protocol/muc#user');
 const ns_composing = new Namespace('http://jabber.org/protocol/chatstates');
 const ns_roster     = 'jabber:iq:roster';
-const ns_x4m_in = 'http://hyperstruct.net/xmpp4moz/protocol/internal';
-const ns_vcard  = 'vcard-temp';
-const defaultAvatar = 'chrome://notifyme/skin/logo96.png';
 
 /* Global vars */
 var win;
-var sound;
 var popup;
 var roomspopup;
 
 var channel;
 var XMPP;
 var account;
-var util = {};
+var utils = {};
 
 var roster;
 var avatar;
@@ -64,17 +60,14 @@ function init() {
 
     /* Checks if an old version left prefs type as String and fix it to Boolean*/
     if (pref.getPrefType('togglePopupKey') != "128" || pref.getPrefType('toggleSoundKey') != "128"  ){
-	
 	pref.deleteBranch("");
     }
 
-    // Makes xmpp4moz available here 
+    // External scripts import
     var env = {};
     loader.loadSubScript('chrome://xmpp4moz/content/xmpp.js', env);
     XMPP = env.XMPP;
-
-    // Makes utils.js available here    
-    loader.loadSubScript('chrome://notifyme/content/lib/util_impl.js', util);
+    loader.loadSubScript('chrome://notifyme/content/lib/util_impl.js', utils);
     
     channel = XMPP.createChannel(
 				 <query xmlns="http://jabber.org/protocol/disco#info">
@@ -102,23 +95,30 @@ function init() {
 		account = message.account;
 		var address = XMPP.JID(message.stanza.@from).address;
 		
+
 		// Detects if users wants alert popups AND/OR sound.
 		popup = eval(pref.getBoolPref('togglePopupKey'));
 		roomspopup = eval(pref.getBoolPref('toggleRoomsKey'));
-		sound = eval(pref.getBoolPref('toggleSoundKey'));
+		//		sound = eval(pref.getBoolPref('toggleSoundKey'));
 
 		// Detects if message comes from a room and obtain contact nick by resourse
 		if(message.stanza.@type == "groupchat" && roomspopup){
-		    var nick = XMPP.JID(message.stanza.@from).resource + " from " + XMPP.JID(message.stanza.@from).address;
-		    avatar = util.getAvatar(account, address, XMPP);
-		    
-		    composeAndSend(nick, msgbody, avatar);
+		    var check = message.stanza.toXMLString();
+		    if (check.match("jabber:x:delay") != null)
+			{
+			}
+		    else{
+			dump('\n message from room\n');
+			var nick = XMPP.JID(message.stanza.@from).resource + " from " + XMPP.JID(message.stanza.@from).address;
+			avatar = utils.getAvatar(account, address, XMPP);
+			composeAndSend(nick, msgbody, avatar);
+		    }
 		}
 		
 		else if(message.stanza.@type == "chat" && popup){
 		// Obtains contact nick as you aliased it in your contact list, i.e. Ivan for imorgillo@sameplace.cc
 		    var nick = XMPP.nickFor(message.session.name, XMPP.JID(message.stanza.@from).address);
-		    avatar = util.getAvatar(account, address, XMPP);
+		    avatar = utils.getAvatar(account, address, XMPP);
 		    
 		    composeAndSend(nick, msgbody, avatar);
 		}
@@ -164,14 +164,20 @@ function observe(subject, topic, data) {
 function composeAndSend(nick, body, avatar){
 
     if(body.match("image:") != null || body.match("<img") != null ){
-	util.showmsgpopup(avatar, nick, "has sent you an image", sound);
+	utils.showmsgpopup(avatar, nick, "has sent you an image");
     }
     else if (body.match("http://") != null || body.match("<a href=") != null ){
-	util.showmsgpopup(avatar, nick, "has sent you a link", sound);
+	utils.showmsgpopup(avatar, nick, "has sent you a link");
     }
+    /*
+    else if (body.match("jabber:x:delay") != null){
+	// Does nothing
+	dump('\n msg comes from room history\n');
+    }
+    */
     else{
 	/* Checks if msg body is longer than 50 chars and cuts it */
 	if(body.length > 50) body = body.substring(0,41) + " ...";
-	util.showmsgpopup(avatar, nick, body, sound);
+	utils.showmsgpopup(avatar, nick, body);
     }
 }

@@ -18,6 +18,13 @@
 
 */
 // INIZIALIZATIONS
+
+// Manages prefs
+const pref = Components
+    .classes["@mozilla.org/preferences-service;1"]
+    .getService(Components.interfaces.nsIPrefService)
+    .getBranch('extensions.notifyme.');
+
 /* Inizialize popup alert */
 const alertService = Components
     .classes['@mozilla.org/alerts-service;1']
@@ -55,13 +62,25 @@ function getAvatar(account, address, XMPP){
 
 
 // ShowS an alert popup and play a sound alert
-function showmsgpopup(avatar, contact, text, sound){
+function showmsgpopup(avatar, contact, text){
     
-    alertService.showAlertNotification(avatar, contact, text, false, "", null);
-    
+    /*    
+    // Listening for callbacks 
+    var listener = {
+	observe: function(subject, topic, data) {
+	    dump("subject=" + subject + ", topic=" + topic + ", data=" + data);
+	}
+    }
+    alertService.showAlertNotification(avatar, contact, text, true, "cookie", listener);
+    */
+
+    alertService.showAlertNotification(avatar, contact, text, true, "", null);
+
     // Forces avatar to default avatar due a lag in avatar update
     //avatar = defaultAvatar;
 
     // Checks prefs to play / not to play a sound alert
+
+    var sound = eval(pref.getBoolPref('toggleSoundKey'));
     if (sound) player.play(music);
 }
