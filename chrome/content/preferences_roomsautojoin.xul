@@ -21,34 +21,12 @@
 <!DOCTYPE overlay SYSTEM "chrome://notifyme/locale/overlay.dtd">
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  <script src="preferences_notifyme.js"/>
+  <script src="preferences_roomsautojoin.js"/>
 
-<!--
-  <popup id="conversation-menu">
-    <menuitem label="Enable notifications from rooms"
-	      accesskey="N"
-	      type="checkbox"
-	      oncommand="notifymePrefs.rooms(event);"/>
-  </popup>
--->
-
-<prefpane id="notifyme-pane">
+<prefpane id="roomsautojoin-pane">
   <groupbox>
-    <checkbox id="notifyme-toggle-popup-key"
-		label="Show an alert popup on incoming messages"
-		oncommand="notifymePrefs.togglePopup(checked)"/>
-
-      <checkbox id="notifyme-toggle-rooms-key"
-		label="Show an alert popup on incoming messages from rooms"
-		oncommand="notifymePrefs.toggleRoomsPopup(checked)"/>
-
-      <checkbox id="notifyme-toggle-sound-key"
-		label="Play a sound on alert popup"
-		oncommand="notifymePrefs.toggleSound(checked)"/>
-
-      <checkbox id="notifyme-toggle-autorec-key"
-		label="Auto-reconnect after disconnection"
-		oncommand="notifymePrefs.toggleAutorec(checked)"/>
+    <checkbox id="one"
+		label="Do you want to autojoin some rooms?"/>		
   </groupbox>
 </prefpane>
 </overlay>

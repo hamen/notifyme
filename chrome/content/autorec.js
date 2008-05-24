@@ -35,7 +35,8 @@ function init() {
 
     channel.on( { event: 'connector', state: 'disconnected'},
 		function(transport){
-		    receivedDisconnection(transport.account);
+		    var check = prefManager.getBoolPref('toggleAutorecKey');
+		    if(check) receivedDisconnection(transport.account);
 		} );
 
     channel.on( { event: 'presence', direction: 'out'},

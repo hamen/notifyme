@@ -102,10 +102,9 @@ function init() {
 		var address = XMPP.JID(message.stanza.@from).address;
 		
 
-		// Detects if users wants alert popups AND/OR sound.
+		// Detects if users wants alert popups 
 		popup = eval(pref.getBoolPref('togglePopupKey'));
 		roomspopup = eval(pref.getBoolPref('toggleRoomsKey'));
-		//		sound = eval(pref.getBoolPref('toggleSoundKey'));
 
 		// Detects if message comes from a room and obtain contact nick by resourse
 		if(message.stanza.@type == "groupchat" && roomspopup){
@@ -114,7 +113,7 @@ function init() {
 			{
 			}
 		    else{
-			dump('\n message from room\n');
+			// dump('\n message from room\n');
 			var nick = XMPP.JID(message.stanza.@from).resource + " from " + XMPP.JID(message.stanza.@from).address;
 			avatar = utils.getAvatar(account, address, XMPP);
 			composeAndSend(nick, msgbody, avatar);

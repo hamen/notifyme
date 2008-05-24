@@ -39,9 +39,17 @@
   </popup>
 
 <prefwindow id="sameplace-preferences">
-  <prefpane id="notifyme-pane" label="Notify me"
+  <prefpane id="notifyme-pane"
+	    label="Notify me"
             image="chrome://sameplace/skin/logo.png"
             src="chrome://notifyme/content/preferences_notifyme.xul"
             onpaneload="notifymePrefs.init();"/>
+
+  <prefpane id="roomsautojoin-pane"
+	    label="Rooms Auto-join"
+	    image="chrome://sameplace/skin/logo.png"
+	    src="chrome://notifyme/content/preferences_roomsautojoin.xul"
+	    onpaneload="notifymeRoomsAutojoin.init();"/>
 </prefwindow>
+
 </overlay> 
