@@ -35,6 +35,7 @@ function init() {
     displayKey('sound', eval(pref.getBoolPref('toggleSoundKey')));
     displayKey('popup', eval(pref.getBoolPref('togglePopupKey')));
     displayKey('rooms', eval(pref.getBoolPref('toggleRoomsKey')));
+    displayKey('autorec', eval(pref.getBoolPref('toggleAutorecKey')));
 }
 
 // UTILITIES
@@ -49,7 +50,9 @@ function togglePopup(status){
 function toggleRoomsPopup(status){
     saveKey('rooms', status);
 }
-
+function toggleAutorec(status){
+    saveKey('autorec', status);
+}
 function saveKey(which, desc) {
     function capitalize(s) {
         return s.substr(0, 1).toUpperCase() + s.substr(1);

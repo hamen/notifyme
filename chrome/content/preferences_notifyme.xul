@@ -45,7 +45,10 @@
       <checkbox id="notifyme-toggle-sound-key"
 		label="Play a sound on alert popup"
 		oncommand="notifymePrefs.toggleSound(checked)"/>
-    </groupbox>
 
-  </prefpane>
+      <checkbox id="notifyme-autorec-key"
+		label="Auto-reconnect after disconnection"
+		oncommand="notifymePrefs.toggleAutorec(checked)"/>
+  </groupbox>
+</prefpane>
 </overlay>

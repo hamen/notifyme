@@ -25,12 +25,12 @@ const pref = Components
     .getService(Components.interfaces.nsIPrefService)
     .getBranch('extensions.notifyme.');
 
-/* Inizialize popup alert */
+// Inizialize popup alert 
 const alertService = Components
     .classes['@mozilla.org/alerts-service;1']
     .getService(Components.interfaces.nsIAlertsService);
 
-/* Initialize interfaces to play a sound alert*/
+// Initialize interfaces to play a sound alert
 var player = Components.classes["@mozilla.org/sound;1"].createInstance(Components.interfaces.nsISound) ;
 var ioservice = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService) ;
 var music = ioservice.newURI ("chrome://notifyme/content/alert.wav" , "" , null ) ; 

@@ -22,6 +22,7 @@ var Dialog = {
   onLoad: function init() {
     // initialization code
     this.initialized = true;
+	
     },
 
   notifyMe: function showDialog(xulPopupNode) {
@@ -55,21 +56,30 @@ var Dialog = {
 };
 
 // GLOBALS
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+
 const loader = Cc['@mozilla.org/moz/jssubscript-loader;1']
     .getService(Ci.mozIJSSubScriptLoader);
 
-var alertsService = Components.classes["@mozilla.org/alerts-service;1"]
+const alertsService = Components.classes["@mozilla.org/alerts-service;1"]
                               .getService(Components.interfaces.nsIAlertsService);
 // EXTERNAL SCRIPTS
 var utils = {};
 loader.loadSubScript('chrome://notifyme/content/lib/util_impl.js', utils);
 
+var autorec = {};
+    loader.loadSubScript('chrome://notifyme/content/autorec.js', autorec);
+    autorec.init();
 // ------------------------------------------------------------------------
 
 window.addEventListener("load", function(e) {
 	
 	try {
-	    Components.classes['@hamen.org/notifyme/service;1'].getService(Components.interfaces.nsIXMPPPresenceNotificationService);
+	    Components
+		.classes['@hamen.org/notifyme/service;1']
+		.getService(Components.interfaces.nsIXMPPPresenceNotificationService);
+
 	} catch(exp) {
 	    Components.utils.reportError(exp); // report the error and continue execution
 	}

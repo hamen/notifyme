@@ -17,10 +17,10 @@
   Ivan Morgillo < imorgillo [at] sanniolug [dot] org >
 */
 
-// GLOBAL DEFINITIONS
+
 // ----------------------------------------------------------------------
 
-
+// GLOBAL DEFINITIONS
 
 /* Enable external scripts import */
 const loader = Cc['@mozilla.org/moz/jssubscript-loader;1']
@@ -36,7 +36,6 @@ const pref = Components
 const ns_muc      = new Namespace('http://jabber.org/protocol/muc');
 const ns_muc_user = new Namespace('http://jabber.org/protocol/muc#user');
 const ns_composing = new Namespace('http://jabber.org/protocol/chatstates');
-const ns_roster     = 'jabber:iq:roster';
 
 /* Global vars */
 var win;
@@ -48,27 +47,34 @@ var XMPP;
 var account;
 var utils = {};
 
-var roster;
 var avatar;
 
+var wm = Components
+    .classes["@mozilla.org/appshell/window-mediator;1"]
+    .getService(Components.interfaces.nsIWindowMediator);
+// MEMO: Specifing navigator:browser Notify me won't work with Thunderbird
+var win = wm.getMostRecentWindow("navigator:browser");
+
+var rooms = {};
 // ----------------------------------------------------------------------
 
 
 function init() {
     // Component loading check
     dump("XPCOM Component has been loaded \n");
-
-    /* Checks if an old version left prefs type as String and fix it to Boolean*/
-    if (pref.getPrefType('togglePopupKey') != "128" || pref.getPrefType('toggleSoundKey') != "128"  ){
-	pref.deleteBranch("");
-    }
-
+    
     // External scripts import
     var env = {};
     loader.loadSubScript('chrome://xmpp4moz/content/xmpp.js', env);
     XMPP = env.XMPP;
     loader.loadSubScript('chrome://notifyme/content/lib/util_impl.js', utils);
     
+    /*
+    var autorec = {};
+    loader.loadSubScript('chrome://notifyme/content/autorec.js', autorec);
+    autorec.init(XMPP, win);
+    */
+
     channel = XMPP.createChannel(
 				 <query xmlns="http://jabber.org/protocol/disco#info">
 				 <feature var="http://jabber.org/protocol/muc"/>
@@ -76,7 +82,7 @@ function init() {
 				 <feature var="http://jabber.org/protocol/xhtml-im"/>
 				 <feature var="http://jabber.org/protocol/chatstates"/>
 				 </query>);    
- 
+    
     channel.on({
 	    event     : 'message',
 	    direction : 'in',
@@ -134,10 +140,6 @@ function init() {
 
 /* Detects if Sidebar is not expanded */
 function isCompact(){
-
-    var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
-    // MEMO: Specifing navigator:browser Notify me won't work with Thunderbird
-    win = wm.getMostRecentWindow("navigator:browser");
     if(win.sameplace.isCompact()) return true;
     else return false;
 }

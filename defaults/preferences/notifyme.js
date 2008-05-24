@@ -15,5 +15,9 @@
   along with 'Notify me'.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/*
 pref("extensions.notifyme.togglePopupKey", true);
 pref("extensions.notifyme.togglePopupSound", true);
+pref("extensions.notifyme.toggleAutorecKey", true);
+pref("extensions.notifyme.toggleRoomsKey", true);
+*/
