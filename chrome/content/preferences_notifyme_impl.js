@@ -32,10 +32,10 @@ const pref = Cc['@mozilla.org/preferences-service;1']
 
 function init() {
     window.sizeToContent();
-    displayKey('sound', eval(pref.getBoolPref('toggleSoundKey')));
-    displayKey('popup', eval(pref.getBoolPref('togglePopupKey')));
-    displayKey('rooms', eval(pref.getBoolPref('toggleRoomsKey')));
-    displayKey('autorec', eval(pref.getBoolPref('toggleAutorecKey')));
+    displayKey('notifyme-sound-key', eval(pref.getBoolPref('toggleSoundKey')));
+    displayKey('notifyme-popup-key', eval(pref.getBoolPref('togglePopupKey')));
+    displayKey('notifyme-rooms-key', eval(pref.getBoolPref('toggleRoomsKey')));
+    displayKey('notifyme-autorec-key', eval(pref.getBoolPref('toggleAutorecKey')));
 }
 
 // UTILITIES
@@ -61,11 +61,12 @@ function saveKey(which, desc) {
 }
 
 function displayKey(which, desc) {
-    _('toggle-' + which + '-key').checked = desc;
+    var key = document.getElementById(which);
+    if (key) key.checked = desc;
 }
 
 function _(id) {
-    return document.getElementById('notifyme-' + id);''
+    return document.getElementById(id);
 }
 
 /*

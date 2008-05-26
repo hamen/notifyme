@@ -34,19 +34,19 @@
 
 <prefpane id="notifyme-pane">
   <groupbox>
-    <checkbox id="notifyme-toggle-popup-key"
+    <checkbox id="notifyme-popup-key"
 		label="Show an alert popup on incoming messages"
 		oncommand="notifymePrefs.togglePopup(checked)"/>
 
-      <checkbox id="notifyme-toggle-rooms-key"
+      <checkbox id="notifyme-rooms-key"
 		label="Show an alert popup on incoming messages from rooms"
 		oncommand="notifymePrefs.toggleRoomsPopup(checked)"/>
 
-      <checkbox id="notifyme-toggle-sound-key"
+      <checkbox id="notifyme-sound-key"
 		label="Play a sound on alert popup"
 		oncommand="notifymePrefs.toggleSound(checked)"/>
 
-      <checkbox id="notifyme-toggle-autorec-key"
+      <checkbox id="notifyme-autorec-key"
 		label="Auto-reconnect after disconnection"
 		oncommand="notifymePrefs.toggleAutorec(checked)"/>
   </groupbox>
