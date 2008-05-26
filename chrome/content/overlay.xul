@@ -34,7 +34,7 @@
   <!-- MENUS -->
   <popup id="contact-popup">
     <menuseparator/>
-    <menuitem label="Notify me"
+    <menuitem label="Watch on this user"
 	      oncommand="Dialog.notifyMe(document.popupNode);"/>
   </popup>
 

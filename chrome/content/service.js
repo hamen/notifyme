@@ -49,11 +49,6 @@ var utils = {};
 
 var avatar;
 
-var wm = Components
-    .classes["@mozilla.org/appshell/window-mediator;1"]
-    .getService(Components.interfaces.nsIWindowMediator);
-// MEMO: Specifing navigator:browser Notify me won't work with Thunderbird
-var win = wm.getMostRecentWindow("navigator:browser");
 
 var rooms = {};
 // ----------------------------------------------------------------------
@@ -122,7 +117,7 @@ function init() {
 		
 		else if(message.stanza.@type == "chat" && popup){
 		// Obtains contact nick as you aliased it in your contact list, i.e. Ivan for imorgillo@sameplace.cc
-		    var nick = XMPP.nickFor(message.session.name, XMPP.JID(message.stanza.@from).address);
+		    var nick = XMPP.nickFor(message.account, XMPP.JID(message.stanza.@from).address);
 		    avatar = utils.getAvatar(account, address, XMPP);
 		    
 		    composeAndSend(nick, msgbody, avatar);
@@ -139,6 +134,12 @@ function init() {
 
 /* Detects if Sidebar is not expanded */
 function isCompact(){
+    var wm = Components
+	.classes["@mozilla.org/appshell/window-mediator;1"]
+	.getService(Components.interfaces.nsIWindowMediator);
+    // MEMO: Specifing navigator:browser Notify me won't work with Thunderbird
+    win = wm.getMostRecentWindow("navigator:browser");
+    
     if(win.sameplace.isCompact()) return true;
     else return false;
 }

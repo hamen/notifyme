@@ -26,12 +26,22 @@ var Dialog = {
     },
 
   notifyMe: function showDialog(xulPopupNode) {
+	/* Initialize interfaces to manage prefs */
+	const pref = Components
+	.classes["@mozilla.org/preferences-service;1"]
+	.getService(Components.interfaces.nsIPrefService)
+	.getBranch('extensions.notifyme.');
+
 	// Gets clicked contact JID address
 	var xulContact = $(xulPopupNode, '^ .contact');
 	var address = xulContact.getAttribute('address');
-	
+	var account = xulContact.getAttribute('account');
+
+	// Obtains contact nick as you aliased it in your contact list, i.e. Ivan for imorgillo@sameplace.cc
+	var nick = XMPP.nickFor(account, address);
+		
 	// Opens Dialog and passes clicked contact JID address to it 
-	var params = {inn:{address:address, online:false, offline:false, away:false, busy:false}, out:null};
+	var params = {inn:{address:nick, online:false, offline:false, away:false, busy:false}, out:null};
 	var checkboxes;
 
 	window.openDialog("chrome://notifyme/content/dialog.xul", "",
@@ -47,7 +57,17 @@ var Dialog = {
 	    counts.away = 0;
 	    counts.busy = 0;
 
-	    watchonUser(address, boxes, counts);
+	    u = new user(address, nick, boxes, counts);
+	    usersArray.push(u);
+
+	    // Save array in prefs
+	    pref.setCharPref('usersArray', usersArray.toSource());
+	    //
+	    // then
+	    var array = new Array();
+	    array = eval(pref.getCharPref('usersArray'));
+
+	    watchonUser(u);
 	}
 	else {
 	    // User clicked cancel. Typically, nothing is done here.
@@ -56,6 +76,7 @@ var Dialog = {
 };
 
 // GLOBALS
+var usersArray = new Array();
 var Cc = Components.classes;
 var Ci = Components.interfaces;
 
@@ -64,6 +85,10 @@ const loader = Cc['@mozilla.org/moz/jssubscript-loader;1']
 
 const alertsService = Components.classes["@mozilla.org/alerts-service;1"]
                               .getService(Components.interfaces.nsIAlertsService);
+
+
+
+
 // EXTERNAL SCRIPTS
 var utils = {};
 loader.loadSubScript('chrome://notifyme/content/lib/util_impl.js', utils);
@@ -89,34 +114,38 @@ window.addEventListener("load", function(e) {
     }, false);
 
 
-function detectedContact(presence, checkboxes, address, counts) {
+function detectedContact(presence, user) {
     var text;
     var account = presence.account;
     var avatar = utils.getAvatar(account, XMPP.JID(presence.stanza.@from).address, XMPP);
     
-    if(presence.stanza.@type == 'unavailable' && checkboxes.offline && counts.offline < 1){
-	utils.showmsgpopup(avatar, address, "has changed status to UNAVAILABLE", false);	
-	counts.offline = 1;
+    if(presence.stanza.@type == 'unavailable' && user.boxes.offline && user.counts.offline < 1){
+	utils.showmsgpopup(avatar, user.nick, "has changed status to UNAVAILABLE", false);	
+	user.counts.offline = 1;
+	window.getAttention();
     }
-    else if (presence.stanza.show == 'away' && checkboxes.away == true && counts.away < 1){
-	utils.showmsgpopup(avatar, address, "has changed status to AWAY", false);	
-	counts.away = 1;
+    else if (presence.stanza.show == 'away' && user.boxes.away == true && user.counts.away < 1){
+	utils.showmsgpopup(avatar, user.nick, "has changed status to AWAY", false);	
+	user.counts.away = 1;
+	window.getAttention();
     }
-    else if (presence.stanza.show == 'dnd' && checkboxes.busy && counts.busy < 1){
-	utils.showmsgpopup(avatar, address, "has changed status to BUSY", false);	
-	counts.busy = 1;
+    else if (presence.stanza.show == 'dnd' && user.boxes.busy && user.counts.busy < 1){
+	utils.showmsgpopup(avatar, user.nick, "has changed status to BUSY", false);	
+	user.counts.busy = 1;
+	window.getAttention();
     }
     else if (presence.stanza.@type == undefined &&
 	     presence.stanza.show != 'dnd' &&
 	     presence.stanza.show != 'away' &&
-	     checkboxes.online && counts.online < 1){
-	utils.showmsgpopup(avatar, address, "has changed status to AVAILABLE", false);	
-	counts.online = 1;
+	     user.boxes.online && user.counts.online < 1){
+	utils.showmsgpopup(avatar, user.nick, "has changed status to AVAILABLE", false);	
+	user.counts.online = 1;
+	window.getAttention();
     }
-    window.getAttention();
+    
 }
 
-function watchonUser(contact, boxes, counts){
+function watchonUser(user){
 // Start to sniff the channel
     var channel = XMPP.createChannel();
 
@@ -124,9 +153,17 @@ function watchonUser(contact, boxes, counts){
 	    event     : 'presence',
 	    direction : 'in',
 		stanza : function(s) {
-		return XMPP.JID(s.@from).address == contact;
+		return XMPP.JID(s.@from).address == user.address;
 	    }},
 	function(presence) { 
-	    var nick =  XMPP.nickFor(presence.session.name, XMPP.JID(presence.stanza.@from).address);
-	    detectedContact(presence, boxes, nick, counts); });
+	    //var nick =  XMPP.nickFor(presence.session.name, XMPP.JID(presence.stanza.@from).address);
+	    detectedContact(presence, user);
+	});
+}
+
+function user( a, n, b, c){
+    this.address = a;
+    this.nick = n;
+    this.boxes = b;
+    this.counts = c;
 }
