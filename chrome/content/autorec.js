@@ -20,7 +20,15 @@ var channel;
 var account;
 var counter = 0;
 
-var rooms = {};
+var window;
+var XMPP;
+
+// Detects browser window
+var wm = Components
+    .classes["@mozilla.org/appshell/window-mediator;1"]
+    .getService(Components.interfaces.nsIWindowMediator);
+// MEMO: Specifing navigator:browser Notify me won't work with Thunderbird
+window = wm.getMostRecentWindow("navigator:browser");
 
 // Mozilla Firefox Preferences managing interface
 const prefManager = Components
@@ -29,14 +37,14 @@ const prefManager = Components
     .getBranch('extensions.notifyme.');
 
 // --------------------------------------------------------------
-function init() {
-    
+function init(XMPP) {
+
     channel = XMPP.createChannel();
 
     channel.on( { event: 'connector', state: 'disconnected'},
 		function(transport){
 		    var check = prefManager.getBoolPref('toggleAutorecKey');
-		    if(check) receivedDisconnection(transport.account);
+		    if(check) receivedDisconnection(transport.account, XMPP);
 		} );
 
     channel.on( { event: 'presence', direction: 'out'},
@@ -44,7 +52,7 @@ function init() {
 
     channel.on( { event: 'connector', state: 'connected'},
 		function(transport){
-		    setSM(transport.account);} );
+		    setSM(transport.account, XMPP);} );
 }
 
 
@@ -52,11 +60,11 @@ function finish() {
     channel.release();
 }
 
-function receivedDisconnection(account) {
+function receivedDisconnection(account, XMPP) {
 
     window.setTimeout(function() {
 	    XMPP.up(account, function() {
-		    setSM(account);
+		    setSM(account, XMPP);
 		});
 	}, 3000)
 	}
@@ -77,20 +85,13 @@ function getSM(){
     return msg;
 }
 
-function setSM(acc){
+function setSM(acc, XMPP){
 
     if (counter != 3){
 	window.setTimeout(function() {
 		var statusmessage = getSM();
 		XMPP.send(acc, statusmessage);
-		
-		if (rooms){
-		    for each(var item in rooms){
-			    XMPP.send(acc, '<presence to="'+ item +'"><x xmlns="http://jabber.org/protocol/muc"/></presence>');
-			}
-		}
-	    },
-	    7000);
+	    },7000);
 	counter++;
     } else{
 	window.setTimeout(function() {}, 1000000);

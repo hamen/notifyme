@@ -95,7 +95,7 @@ loader.loadSubScript('chrome://notifyme/content/lib/util_impl.js', utils);
 
 var autorec = {};
     loader.loadSubScript('chrome://notifyme/content/autorec.js', autorec);
-    autorec.init();
+    autorec.init(XMPP);
 // ------------------------------------------------------------------------
 
 window.addEventListener("load", function(e) {

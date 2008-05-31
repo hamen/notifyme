@@ -28,7 +28,7 @@
   <!-- SCRIPTS -->  
   <script src="overlay.js"/>
   <script src="preferences_notifyme.js"/>
-  
+  <script src="preferences_roomsautojoin.js"/>
   <script type="application/x-javascript;version=1.7" src="chrome://xmpp4moz/content/xmpp.js"/>
 
   <!-- MENUS -->
@@ -44,13 +44,12 @@
             image="chrome://sameplace/skin/logo.png"
             src="chrome://notifyme/content/preferences_notifyme.xul"
             onpaneload="notifymePrefs.init();"/>
-<!--
+
   <prefpane id="roomsautojoin-pane"
-	    label="Rooms Auto-join"
+	    label="Rooms Auto-join (devel)"
 	    image="chrome://sameplace/skin/logo.png"
 	    src="chrome://notifyme/content/preferences_roomsautojoin.xul"
 	    onpaneload="notifymeRoomsAutojoin.init();"/>
--->
 </prefwindow>
 
 </overlay> 

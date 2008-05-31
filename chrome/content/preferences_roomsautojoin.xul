@@ -24,9 +24,21 @@
   <script src="preferences_roomsautojoin.js"/>
 
 <prefpane id="roomsautojoin-pane">
+
+  <preferences>
+    <preference id="notifyme-roomsautojoin" name="preferences_roomsautojoin.symbol" type="boolean"/>
+  </preferences>
+
+  <label control="roomsautojoin" value="Stock to watch: "/>
+  <textbox preference="notifyme-roomsautojoin" id="symbol" maxlength="4"/>
+
+
+<!--
   <groupbox>
-    <checkbox id="one"
-		label="Do you want to autojoin some rooms?"/>		
+    <checkbox preferences="notifyme-roomsautojoin"
+	      id="roomsautojoin"
+	      label="Do you want to autojoin some rooms?"/>		
   </groupbox>
+-->
 </prefpane>
 </overlay>
