@@ -21,24 +21,29 @@
 <!DOCTYPE overlay SYSTEM "chrome://notifyme/locale/overlay.dtd">
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  <script src="preferences_roomsautojoin.js"/>
-
+  
 <prefpane id="roomsautojoin-pane">
 
   <preferences>
-    <preference id="notifyme-roomsautojoin" name="preferences_roomsautojoin.symbol" type="boolean"/>
+    <preference id="notifyme-autojoin"
+		name="extensions.notifyme.autojoin"
+		type="bool"
+		instantApply="true" />
   </preferences>
-
-  <label control="roomsautojoin" value="Stock to watch: "/>
-  <textbox preference="notifyme-roomsautojoin" id="symbol" maxlength="4"/>
-
-
-<!--
-  <groupbox>
-    <checkbox preferences="notifyme-roomsautojoin"
+  <vbox>
+    
+    <checkbox preference="notifyme-autojoin"
 	      id="roomsautojoin"
-	      label="Do you want to autojoin some rooms?"/>		
-  </groupbox>
--->
+	      label="Enable rooms autojoin"/>
+    
+    <label control="roomid" value="Room to join"/>
+    <textbox id="roomid" value="...@places.sameplace.cc"/> <button label="Add"
+								   oncommand="notifymeRoomsAutojoin.addItem();"/>
+    <listbox id="thelist" >
+      <listitem value="{item value}" label="item label"/>
+    </listbox>
+    <button label="Remove"/>
+  </vbox>
+  
 </prefpane>
 </overlay>

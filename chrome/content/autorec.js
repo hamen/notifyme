@@ -43,7 +43,7 @@ function init(XMPP) {
 
     channel.on( { event: 'connector', state: 'disconnected'},
 		function(transport){
-		    var check = prefManager.getBoolPref('toggleAutorecKey');
+		    var check = prefManager.getBoolPref('autorec');
 		    if(check) receivedDisconnection(transport.account, XMPP);
 		} );
 

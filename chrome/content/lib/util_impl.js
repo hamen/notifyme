@@ -81,6 +81,6 @@ function showmsgpopup(avatar, contact, text){
 
     // Checks prefs to play / not to play a sound alert
 
-    var sound = eval(pref.getBoolPref('toggleSoundKey'));
+    var sound = eval(pref.getBoolPref('sound'));
     if (sound) player.play(music);
 }

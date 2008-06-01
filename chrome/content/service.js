@@ -98,8 +98,8 @@ function init() {
 		
 
 		// Detects if users wants alert popups 
-		popup = eval(pref.getBoolPref('togglePopupKey'));
-		roomspopup = eval(pref.getBoolPref('toggleRoomsKey'));
+		popup = eval(pref.getBoolPref('popup'));
+		roomspopup = eval(pref.getBoolPref('roomspopup'));
 
 		// Detects if message comes from a room and obtain contact nick by resourse
 		if(message.stanza.@type == "groupchat" && roomspopup){

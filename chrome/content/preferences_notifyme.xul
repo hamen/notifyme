@@ -23,32 +23,40 @@
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   <script src="preferences_notifyme.js"/>
 
-<!--
-  <popup id="conversation-menu">
-    <menuitem label="Enable notifications from rooms"
-	      accesskey="N"
-	      type="checkbox"
-	      oncommand="notifymePrefs.rooms(event);"/>
-  </popup>
--->
+<preferences>
+    <preference id="notifyme-popup"
+		name="extensions.notifyme.popup"
+		type="bool"
+		instantApply="true" />
+    <preference id="notifyme-roomspopup"
+		name="extensions.notifyme.roomspopup"
+		type="bool"
+		instantApply="true" />
+    <preference id="notifyme-sound"
+		name="extensions.notifyme.sound"
+		type="bool"
+		instantApply="true" />
+    <preference id="notifyme-autorec"
+		name="extensions.notifyme.autorec"
+		type="bool"
+		instantApply="true" />
+  </preferences>
+
 
 <prefpane id="notifyme-pane">
   <groupbox>
-    <checkbox id="notifyme-popup-key"
-		label="Show an alert popup on incoming messages"
-		oncommand="notifymePrefs.togglePopup(checked)"/>
-
-      <checkbox id="notifyme-rooms-key"
-		label="Show an alert popup on incoming messages from rooms"
-		oncommand="notifymePrefs.toggleRoomsPopup(checked)"/>
-
-      <checkbox id="notifyme-sound-key"
-		label="Play a sound on alert popup"
-		oncommand="notifymePrefs.toggleSound(checked)"/>
-
-      <checkbox id="notifyme-autorec-key"
-		label="Auto-reconnect after disconnection"
-		oncommand="notifymePrefs.toggleAutorec(checked)"/>
+    <checkbox preference="notifyme-popup"
+	      id="popup"
+	      label="Show an alert popup on incoming messages"/>
+    <checkbox preference="notifyme-roomspopup"
+	      id="roomspopup"
+	      label="Show an alert popup on incoming messages from rooms"/>
+    <checkbox preference="notifyme-sound"
+	      id="popupsound"
+	      label="Play a sound on alert popup"/>
+    <checkbox preference="notifyme-autorec"
+	      id="autorec"
+	      label="Auto-reconnect after disconnection"/>
   </groupbox>
 </prefpane>
 </overlay>

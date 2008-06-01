@@ -25,85 +25,19 @@ var Cr = Components.results;
 const pref = Cc['@mozilla.org/preferences-service;1']
     .getService(Ci.nsIPrefService)
     .getBranch('extensions.notifyme.');
-var roomsautojoin;
-var symbol;
 
 // INITIALIZATION
 // ----------------------------------------------------------------------
 function init() {
-    window.sizeToContent();
-    // Install load and unload handlers
-
-    window.addEventListener("load", function(e) { RoomsAutojoin.startup(); }, false);
-    window.addEventListener("unload", function(e) { RoomsAutojoin.shutdown(); }, false);
+    // window.sizeToContent();
 }
 
-var RoomsAutojoin = {
-	prefs: null,
-	tickerSymbol: "",
-	
-	// Initialize the extension
-	
-	startup: function()
-	{
-	    // Register to receive notifications of preference changes
-	    this.prefs = Components.classes["@mozilla.org/preferences-service;1"]
-	    .getService(Components.interfaces.nsIPrefService)
-	    .getBranch("extensions.notifyme.");
-	  
-	    this.prefs.QueryInterface(Components.interfaces.nsIPrefBranch2);
-	    this.prefs.addObserver("", this, false);
-	    
-	    this.tickerSymbol = this.prefs.getBoolPref("roomsautojoin");
-	    	    
-	    this.refreshInformation();		
-	    window.setInterval(this.refreshInformation, 10*60*1000);
-	},
-	
-	// Clean up after ourselves and save the prefs
-	
-	shutdown: function()
-	{
-		this.prefs.removeObserver("", this);
-	},
-	
-	// Called when events occur on the preferences
-	
-	observe: function(subject, topic, data)
-	{
-		if (topic != "nsPref:changed")
-		{
-			return;
-		}
-
-		switch(data)
-		{
-			case "roomsautojoin":
-				this.tickerSymbol = this.prefs.getBoolPref("roomsautojoin");
-				this.refreshInformation();
-				break;
-		}
-	},
-	
-	// Switches to watch a different stock, by symbol
-	
-	watchStock: function(newSymbol)
-	{
-		this.prefs.setCharPref("roomsautojoin", newSymbol);
-	},
-	
-	// Refresh the stock information
-	
-	refreshInformation: function()
-	{
-	    var symbol = true;
-
-	    roomsautojoin = RoomsAutojoin.tickerSymbol;
-	    
-	}
-}
+function addItem(){
+    // Gets rooms list and current room user wants to add
+    var list = document.getElementById('thelist');
+    var room = document.getElementById('roomid').value;
     
-
-    function getRoomsautojoin(){
-	return roomsautojoin;
-    }
+    list.appendItem(room, room);
+    
+    alert(list.getItemAtIndex(1).value);
+}
