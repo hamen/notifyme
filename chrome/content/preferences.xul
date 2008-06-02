@@ -21,35 +21,43 @@
 <?xml-stylesheet href="chrome://notifyme/skin/overlay.css" type="text/css"?>
 <!DOCTYPE overlay SYSTEM "chrome://notifyme/locale/overlay.dtd">
 
-<overlay id="notifyme-overlay"
-	 xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  
-  <!-- MENUS -->
+<!--  
   <popup id="contact-popup">
     <menuseparator/>
     <menuitem label="Watch on this user"
 	      oncommand="Dialog.notifyMe(document.popupNode);"/>
   </popup>
-  <!--
-      <prefwindow id="sameplace-preferences">
-	
-	<prefpane id="notifyme-pane"
-		  label="Notify me"
-		  image="chrome://sameplace/skin/logo.png"
-		  src="chrome://notifyme/content/preferences_notifyme.xul"
-		  onpaneload="notifymePrefs.init();"/>
+-->
 
-	<prefpane id="roomsautojoin-pane"
-		  label="Rooms Auto-join"
-		  image="chrome://sameplace/skin/logo.png"
-		  src="chrome://notifyme/content/preferences_roomsautojoin.xul"
-		  onpaneload="notifymeRoomsAutojoin.init();"/>
-      </prefwindow>
-	-->
-  <!-- SCRIPTS -->
+<overlay id="notifyme-preferences"
+	 xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<prefwindow id="sameplace-preferences"
+	    type="prefwindow"
+            title="SamePlace Preferences"
+            windowtype="SamePlace:Preferences"
+            xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <prefpane id="notifyme-pane"
+	    insertafter="sameplace-pane"
+	    label="Notify me"
+            image="chrome://sameplace/skin/logo.png"
+            src="chrome://notifyme/content/preferences_notifyme.xul"
+            onpaneload="notifymePrefs.init();"/>
+
+  <prefpane id="roomsautojoin-pane"
+	    insertafter="notifyme-pane"
+	    label="Rooms Auto-join"
+	    image="chrome://sameplace/skin/logo.png"
+	    src="chrome://notifyme/content/preferences_roomsautojoin.xul"
+	    onpaneload="notifymeRoomsAutojoin.init();"
+	    />
+
+  <!-- SCRIPTS -->  
   <script type="application/x-javascript;version=1.7" src="chrome://xmpp4moz/content/xmpp.js"/>
   <script type="application/x-javascript;version=1.7" src="overlay.js"/>
   <script type="application/x-javascript;version=1.7" src="preferences_notifyme.js"/>
   <script type="application/x-javascript;version=1.7" src="preferences_roomsautojoin.js"/>
 
-</overlay> 
+</prefwindow>
+</overlay>

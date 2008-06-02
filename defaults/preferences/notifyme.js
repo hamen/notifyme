@@ -19,3 +19,4 @@ pref("extensions.notifyme.popup", true);
 pref("extensions.notifyme.roomspopup", true);
 pref("extensions.notifyme.sound", true);
 pref("extensions.notifyme.autorec", true);
+pref("extensions.notifyme.autojoin", false);
