@@ -37,13 +37,14 @@
             image="chrome://sameplace/skin/logo.png"
             src="chrome://notifyme/content/preferences_notifyme.xul"
             onpaneload="notifymePrefs.init();"/>
-<!--
+
   <prefpane id="roomsautojoin-pane"
-	    label="Rooms Auto-join (devel)"
+	    label="Rooms Auto-join"
 	    image="chrome://sameplace/skin/logo.png"
 	    src="chrome://notifyme/content/preferences_roomsautojoin.xul"
+	    onpaneload="notifymeRoomsAutojoin.init();"
 	    />
-  -->
+
   <!-- SCRIPTS -->  
   <script src="overlay.js"/>
   <script src="preferences_notifyme.js"/>

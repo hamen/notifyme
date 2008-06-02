@@ -36,8 +36,14 @@ const prefManager = Components
     .getService(Components.interfaces.nsIPrefService)
     .getBranch('extensions.notifyme.');
 
+var rooms;
+var akk;
+var x4m;
+var nick = "hamen";
+
 // --------------------------------------------------------------
 function init(XMPP) {
+    
 
     channel = XMPP.createChannel();
 
@@ -52,7 +58,14 @@ function init(XMPP) {
 
     channel.on( { event: 'connector', state: 'connected'},
 		function(transport){
-		    setSM(transport.account, XMPP);} );
+		    setSM(transport.account, XMPP);
+		    
+		    // Rooms auto-join
+		    var check = prefManager.getBoolPref('autojoin');
+		    if (check){
+			joinRooms(transport.account, XMPP);
+		    }
+		} );
 }
 
 
@@ -65,6 +78,12 @@ function receivedDisconnection(account, XMPP) {
     window.setTimeout(function() {
 	    XMPP.up(account, function() {
 		    setSM(account, XMPP);
+
+		    // Rooms auto-join
+		    var check = prefManager.getBoolPref('autojoin');
+		    if (check){
+			joinRooms(transport.account, XMPP);
+		    }
 		});
 	}, 3000)
 	}
@@ -98,4 +117,26 @@ function setSM(acc, XMPP){
 	counter = 0;
     }
     return;
+}
+
+function joinRooms(acc, XMPP){
+    window.setTimeout(function() {
+	    //    alert('autojoin: ');
+	    roomsarray = eval(prefManager.getCharPref('rooms2join'));
+	    
+	    akk = acc;
+	    x4m = XMPP;
+
+	    roomsarray.forEach(join);
+	    
+	}, 5000);
+}
+
+function join(element, index, array){
+    // alert('account is: ' + akk + ' and room is: ' + element);
+    x4m.send(akk, '<presence to="'+ element +'"><x xmlns="http://jabber.org/protocol/muc"/></presence>');
+}
+
+function printElt(element, index, array) {
+    alert("[" + index + "] is " + element);
 }
