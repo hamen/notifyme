@@ -36,38 +36,102 @@ var Dialog = {
 	var xulContact = $(xulPopupNode, '^ .contact');
 	var address = xulContact.getAttribute('address');
 	var account = xulContact.getAttribute('account');
-
+	//alert('account is: ' +account + ' and address is: ' +address);
 	// Obtains contact nick as you aliased it in your contact list, i.e. Ivan for imorgillo@sameplace.cc
 	var nick = XMPP.nickFor(account, address);
+	//alert('nick is: ' + nick);
+
+	usersArray = eval(pref.getCharPref('usersArray'));
+	
+	var length = usersArray.length;
+	var i;
+	for (i=0; i<length; i++){
+	    var user = usersArray[i];
+	    
+	    if(user.address == address){
+		//alert('gia\' presente');
+		var params = {
+		    inn:{
+			nick:user.nick,
+			online:user.boxes.online,
+			offline:user.boxes.offline,
+			away:user.boxes.away,
+			busy:user.boxes.busy
+		    },
+		    out:null
+		};
 		
+		userIsAlreadyIn = {status: true,
+				   index: i};
+	    }
+	}
+	
+	
+	if(!userIsAlreadyIn.status){
+	    var params = {
+		inn:{
+		    nick:nick,
+		    online:false,
+		    offline:false,
+		    away:false,
+		    busy:false
+		},
+		out:null
+	    };	    
+	}
 	// Opens Dialog and passes clicked contact JID address to it 
-	var params = {inn:{address:nick, online:false, offline:false, away:false, busy:false}, out:null};
 	var checkboxes;
 
 	window.openDialog("chrome://notifyme/content/dialog.xul", "",
 			  "chrome, dialog, modal, resizable=yes", params).focus();
+	
 	if (params.out) {
 	    
 	    var boxes = params.out;
-	    var counts = {offline:0, online:0, away:0, busy:0};
-	    
+	    var counts = {
+		offline:0,
+		online:0,
+		away:0,
+		busy:0
+	    };
+
 	    // Reset counts
 	    counts.online = 0;
 	    counts.offline = 0;
 	    counts.away = 0;
 	    counts.busy = 0;
 
-	    u = new user(address, nick, boxes, counts);
-	    usersArray.push(u);
+	    if(userIsAlreadyIn.status) usersArray.splice(userIsAlreadyIn.index,1);
+	    
+	    if(userIsAlreadyIn.status && 
+	       boxes.online == false && 
+	       boxes.offline == false && 
+	       boxes.away == false && 
+	       boxes.busy == false ){
+		//alert('all the fucking boxes are false');
+		var u = new User(address, nick, boxes, counts);
+		usersArray.push(u);
+		usersArray.pop();
+		userIsAlreadyIn.status = false;
 
-	    // Save array in prefs
-	    pref.setCharPref('usersArray', usersArray.toSource());
+		pref.setCharPref('usersArray', usersArray.toSource());
+	    }
+	    else {
+		var u = new User(address, nick, boxes, counts);
+		usersArray.push(u);
+
+		// Save array in prefs
+		pref.setCharPref('usersArray', usersArray.toSource());
+		watchonUser(u);
+	    } 
+
 	    //
-	    // then
+	    /* then
 	    var array = new Array();
 	    array = eval(pref.getCharPref('usersArray'));
+	    */
 
-	    watchonUser(u);
+	    
 	}
 	else {
 	    // User clicked cancel. Typically, nothing is done here.
@@ -77,6 +141,7 @@ var Dialog = {
 
 // GLOBALS
 var usersArray = new Array();
+var userIsAlreadyIn = {};
 var Cc = Components.classes;
 var Ci = Components.interfaces;
 
@@ -163,9 +228,32 @@ function watchonUser(user){
 	});
 }
 
-function user( a, n, b, c){
+function User( a, n, b, c){
     this.address = a;
     this.nick = n;
     this.boxes = b;
     this.counts = c;
 }
+
+/*
+usersArray:
+
+[{address:"imorgillo@sameplace.cc", nick:"Ivan", boxes:{online:false, offline:false, away:true, busy:false}, counts:{offline:0, online:0, away:0, busy:0}}]
+
+[{address:"imorgillo@sameplace.cc", nick:"Ivan", boxes:{online:false, offline:false, away:true, busy:false}, counts:{offline:0, online:0, away:0, busy:0}}, {address:"imorgillo@sameplace.cc", nick:"Ivan", boxes:{online:false, offline:false, away:true, busy:true}, counts:{offline:0, online:0, away:0, busy:0}}]
+
+[{address:"techflux@sameplace.cc", nick:"Amore mio on hamen_testing", boxes:{online:false, offline:false, away:true, busy:false}, counts:{offline:0, online:0, away:0, busy:0}}, {address:"imorgillo@sameplace.cc", nick:"Ivan", boxes:{online:false, offline:true, away:true, busy:true}, counts:{offline:0, online:0, away:0, busy:0}}]
+
+[{address:"imorgillo@sameplace.cc", nick:"Ivan", boxes:{online:false, offline:true, away:true, busy:true}, counts:{offline:0, online:0, away:0, busy:0}}, {address:"techflux@sameplace.cc", nick:"Amore mio on hamen_testing", boxes:{online:false, offline:false, away:false, busy:false}, counts:{offline:0, online:0, away:0, busy:0}}]
+
+[{address:"imorgillo@sameplace.cc", nick:"Ivan", boxes:{online:false, offline:false, away:true, busy:false}, counts:{offline:0, online:0, away:0, busy:0}}]
+
+[{address:"imorgillo@sameplace.cc", nick:"Ivan", boxes:{online:false, offline:false, away:true, busy:true}, counts:{offline:0, online:0, away:0, busy:0}}]
+[{address:"imorgillo@sameplace.cc", nick:"Ivan", boxes:{online:false, offline:false, away:true, busy:true}, counts:{offline:0, online:0, away:0, busy:0}}]
+
+[{address:"imorgillo@sameplace.cc", nick:"Ivan", boxes:{online:false, offline:false, away:true, busy:false}, counts:{offline:0, online:0, away:0, busy:0}}]
+
+[{address:"techflux@sameplace.cc", nick:"Amore mio on hamen_testing", boxes:{online:false, offline:false, away:false, busy:true}, counts:{offline:0, online:0, away:0, busy:0}}, {address:"imorgillo@sameplace.cc", nick:"Ivan", boxes:{online:false, offline:false, away:false, busy:true}, counts:{offline:0, online:0, away:0, busy:0}}]
+
+[{address:"techflux@sameplace.cc", nick:"Amore mio on hamen_testing", boxes:{online:false, offline:false, away:true, busy:false}, counts:{offline:0, online:0, away:0, busy:0}}]
+ */

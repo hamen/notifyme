@@ -20,3 +20,4 @@ pref("extensions.notifyme.roomspopup", true);
 pref("extensions.notifyme.sound", true);
 pref("extensions.notifyme.autorec", true);
 pref("extensions.notifyme.autojoin", false);
+pref("extensions.notifyme.usersArray", "[]");
