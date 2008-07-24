@@ -49,15 +49,20 @@ function init(XMPP) {
 
     channel.on( { event: 'connector', state: 'disconnected'},
 		function(transport){
+		    //alert("event: \'connector\', state: \'disconnected\'");
 		    var check = prefManager.getBoolPref('autorec');
 		    if(check) receivedDisconnection(transport.account, XMPP);
 		} );
 
     channel.on( { event: 'presence', direction: 'out'},
-		function(presence){ newSM(presence);} );
+		function(presence){
+		    //alert("event: \'presence\', direction: \'out\'");
+		    newSM(presence);} );
 
-    channel.on( { event: 'connector', state: 'connected'},
+    channel.on( { event: 'connector', state: 'active'},
 		function(transport){
+		    //alert("event: \'connector\', state: \'connected\'");
+
 		    setSM(transport.account, XMPP);
 		    
 		    // Rooms auto-join
@@ -82,7 +87,7 @@ function receivedDisconnection(account, XMPP) {
 		    // Rooms auto-join
 		    var check = prefManager.getBoolPref('autojoin');
 		    if (check){
-			joinRooms(transport.account, XMPP);
+			joinRooms(account, XMPP);
 		    }
 		});
 	}, 3000)
@@ -121,7 +126,7 @@ function setSM(acc, XMPP){
 
 function joinRooms(acc, XMPP){
     window.setTimeout(function() {
-	    //    alert('autojoin: ');
+	    //alert('autojoin: ');
 	    roomsarray = eval(prefManager.getCharPref('rooms2join'));
 	    
 	    akk = acc;

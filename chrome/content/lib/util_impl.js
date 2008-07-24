@@ -74,8 +74,8 @@ function showmsgpopup(avatar, contact, text){
     alertService.showAlertNotification(avatar, contact, text, true, "cookie", listener);
     */
 
-    alertService.showAlertNotification(avatar, contact, text, true, "", null);
-
+    alertService.showAlertNotification(avatar, contact, text, false, "", null);
+    
     // Forces avatar to default avatar due a lag in avatar update
     //avatar = defaultAvatar;
 
