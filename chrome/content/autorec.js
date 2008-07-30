@@ -29,6 +29,7 @@ var wm = Components
     .getService(Components.interfaces.nsIWindowMediator);
 // MEMO: Specifing navigator:browser Notify me won't work with Thunderbird
 window = wm.getMostRecentWindow("navigator:browser");
+window = wm.getMostRecentWindow("");
 
 // Mozilla Firefox Preferences managing interface
 const prefManager = Components

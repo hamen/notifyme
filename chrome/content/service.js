@@ -32,6 +32,11 @@ const pref = Components
     .getService(Components.interfaces.nsIPrefService)
     .getBranch('extensions.notifyme.');
 
+const appCheck = Components
+    .classes["@mozilla.org/preferences-service;1"]
+    .getService(Components.interfaces.nsIPrefService)
+    .getBranch('general.useragent.extra.');
+
 /* NameSpaces */
 const ns_muc      = new Namespace('http://jabber.org/protocol/muc');
 const ns_muc_user = new Namespace('http://jabber.org/protocol/muc#user');
@@ -51,18 +56,42 @@ var avatar;
 
 
 var rooms = {};
+
+var isFirefox;
+var isThunderbird;
 // ----------------------------------------------------------------------
 
 
 function init() {
-    // Component loading check
-    dump("XPCOM Component has been loaded \n");
-    
+
     // External scripts import
     var env = {};
     loader.loadSubScript('chrome://xmpp4moz/content/xmpp.js', env);
     XMPP = env.XMPP;
     loader.loadSubScript('chrome://notifyme/content/lib/util_impl.js', utils);
+
+    // Detects if users wants alert popups 
+    popup = eval(pref.getBoolPref('popup'));
+    roomspopup = eval(pref.getBoolPref('roomspopup'));
+
+    // Application detecting
+    var children = appCheck.getChildList("", {});
+    if (children == "thunderbird"){
+	dump("XPCOM Component has been loaded in Thunderbird \n");
+	isThunderbird = true;
+	isFirefox = false;
+	
+	runInThunderbird();
+    }
+    if (children == "firefox"){
+	dump("XPCOM Component has been loaded in Firefox \n");
+	isFirefox = true;
+	isThunderbird = false;
+	
+	runInFirefox();
+    }
+
+    
     
     /*
     var autorec = {};
@@ -70,6 +99,10 @@ function init() {
     autorec.init(XMPP, win);
     */
 
+    
+}
+
+function runInFirefox(){
     channel = XMPP.createChannel(
 				 <query xmlns="http://jabber.org/protocol/disco#info">
 				 <feature var="http://jabber.org/protocol/muc"/>
@@ -77,16 +110,19 @@ function init() {
 				 <feature var="http://jabber.org/protocol/xhtml-im"/>
 				 <feature var="http://jabber.org/protocol/chatstates"/>
 				 </query>);    
-    
+
     channel.on({
 	    event     : 'message',
-	    direction : 'in',
+		direction : 'in',
 		}, function(message) {
+	    //var msg = new String(message.stanza.body);
+	    //dump("event: message, direction: in \nmessage.stanza.body = " + msg + "\n");
+
 	    // Detects if msg body is not blank
 	    if(message.stanza.body == undefined){
 		//dump("message.stanza.body == undefined \n");
 	    }
-	    
+
 	    /* Detects if sidebar is not Expanded OR
 	       Firefox is minimized OR
 	       Firefox is another desktop OR
@@ -95,41 +131,60 @@ function init() {
 		msgbody = new String(message.stanza.body);
 		account = message.account;
 		var address = XMPP.JID(message.stanza.@from).address;
-		
 
-		// Detects if users wants alert popups 
-		popup = eval(pref.getBoolPref('popup'));
-		roomspopup = eval(pref.getBoolPref('roomspopup'));
-
-		// Detects if message comes from a room and obtain contact nick by resourse
-		if(message.stanza.@type == "groupchat" && roomspopup){
-		    var check = message.stanza.toXMLString();
-		    if (check.match("jabber:x:delay") != null)
-			{
-			}
-		    else{
-			// dump('\n message from room\n');
-			var nick = XMPP.JID(message.stanza.@from).resource + " from " + XMPP.JID(message.stanza.@from).address;
-			avatar = utils.getAvatar(account, address, XMPP);
-			composeAndSend(nick, msgbody, avatar);
-		    }
-		}
+		detectMsgTypeNSend(message, address, account);
 		
-		else if(message.stanza.@type == "chat" && popup){
-		// Obtains contact nick as you aliased it in your contact list, i.e. Ivan for imorgillo@sameplace.cc
-		    var nick = XMPP.nickFor(message.account, XMPP.JID(message.stanza.@from).address);
-		    avatar = utils.getAvatar(account, address, XMPP);
-		    
-		    composeAndSend(nick, msgbody, avatar);
-		}
 	    }
-	    
+
 	    else{
 		//dump("Sidebar is exanded \n");
 	    }
-	    
-        });
+	});
 }
+
+function runInThunderbird(){
+    var wm = Components
+	.classes["@mozilla.org/appshell/window-mediator;1"]
+	.getService(Components.interfaces.nsIWindowMediator);
+    // MEMO: Specifing navigator:browser Notify me won't work with Thunderbird
+    win = wm.getMostRecentWindow("");
+    var sameplaceframe = win.document.getElementById("sameplace-frame");
+    
+
+    channel = XMPP.createChannel(
+				 <query xmlns="http://jabber.org/protocol/disco#info">
+				 <feature var="http://jabber.org/protocol/muc"/>
+				 <feature var="http://jabber.org/protocol/muc#user"/>
+				 <feature var="http://jabber.org/protocol/xhtml-im"/>
+				 <feature var="http://jabber.org/protocol/chatstates"/>
+				 </query>);    
+    channel.on({
+	    event     : 'message',
+		direction : 'in',
+		}, function(message) {
+	    var msg = new String(message.stanza.body);
+	    dump("event: message, direction: in \nmessage.stanza.body = " + msg + "\n");
+	    
+	    // Detects if msg body is not blank
+	    if(message.stanza.body == undefined){
+		dump("message.stanza.body == undefined \n");
+	    }
+
+	    // Detects if sidebar is expanded
+	    else if(sameplaceframe.collapsed == true){
+	      
+	      msgbody = new String(message.stanza.body);
+	      account = message.account;
+	      var address = XMPP.JID(message.stanza.@from).address;
+	      
+	      detectMsgTypeNSend(message, address, account);
+	      }
+	    else{
+		//dump("Sidebar is exanded \n");
+	    }
+      });
+}
+
 
 
 /* Detects if Sidebar is not expanded */
@@ -142,6 +197,30 @@ function isCompact(){
     
     if(win.sameplace.isCompact()) return true;
     else return false;
+}
+
+function detectMsgTypeNSend(message, address, account){
+    // Detects if message comes from a room and obtain contact nick by resourse
+    if(message.stanza.@type == "groupchat" && roomspopup){
+	var check = message.stanza.toXMLString();
+	if (check.match("jabber:x:delay") != null)
+	    {
+	    }
+	else{
+	    // dump('\n message from room\n');
+	    var nick = XMPP.JID(message.stanza.@from).resource + " from " + XMPP.JID(message.stanza.@from).address;
+	    avatar = utils.getAvatar(account, address, XMPP);
+	    composeAndSend(nick, msgbody, avatar);
+	}
+    }
+    
+    else if(message.stanza.@type == "chat" && popup){
+	// Obtains contact nick as you aliased it in your contact list, i.e. Ivan for imorgillo@sameplace.cc
+	var nick = XMPP.nickFor(message.account, XMPP.JID(message.stanza.@from).address);
+	avatar = utils.getAvatar(account, address, XMPP);
+	
+	composeAndSend(nick, msgbody, avatar);
+    }
 }
 
 /*
