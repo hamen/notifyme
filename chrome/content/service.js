@@ -24,18 +24,18 @@
 
 /* Enable external scripts import */
 const loader = Cc['@mozilla.org/moz/jssubscript-loader;1']
-    .getService(Ci.mozIJSSubScriptLoader);
+  .getService(Ci.mozIJSSubScriptLoader);
 
 /* Initialize interfaces to manage prefs */
 const pref = Components
-    .classes["@mozilla.org/preferences-service;1"]
-    .getService(Components.interfaces.nsIPrefService)
-    .getBranch('extensions.notifyme.');
+  .classes["@mozilla.org/preferences-service;1"]
+  .getService(Components.interfaces.nsIPrefService)
+  .getBranch('extensions.notifyme.');
 
 const appCheck = Components
-    .classes["@mozilla.org/preferences-service;1"]
-    .getService(Components.interfaces.nsIPrefService)
-    .getBranch('general.useragent.extra.');
+  .classes["@mozilla.org/preferences-service;1"]
+  .getService(Components.interfaces.nsIPrefService)
+  .getBranch('general.useragent.extra.');
 
 /* NameSpaces */
 const ns_muc      = new Namespace('http://jabber.org/protocol/muc');
@@ -64,179 +64,183 @@ var isThunderbird;
 
 function init() {
 
-    // External scripts import
-    var env = {};
-    loader.loadSubScript('chrome://xmpp4moz/content/xmpp.js', env);
-    XMPP = env.XMPP;
-    loader.loadSubScript('chrome://notifyme/content/lib/util_impl.js', utils);
+  // External scripts import
+  var env = {};
+  loader.loadSubScript('chrome://xmpp4moz/content/xmpp.js', env);
+  XMPP = env.XMPP;
+  loader.loadSubScript('chrome://notifyme/content/lib/util_impl.js', utils);
 
-    // Detects if users wants alert popups 
-    popup = eval(pref.getBoolPref('popup'));
-    roomspopup = eval(pref.getBoolPref('roomspopup'));
+    
 
-    // Application detecting
-    var children = appCheck.getChildList("", {});
-    if (children == "thunderbird"){
-	dump("XPCOM Component has been loaded in Thunderbird \n");
-	isThunderbird = true;
-	isFirefox = false;
+  // Application detecting
+  var children = appCheck.getChildList("", {});
+  if (children == "thunderbird"){
+    dump("XPCOM Component has been loaded in Thunderbird \n");
+    isThunderbird = true;
+    isFirefox = false;
 	
-	runInThunderbird();
-    }
-    if (children == "firefox"){
-	dump("XPCOM Component has been loaded in Firefox \n");
-	isFirefox = true;
-	isThunderbird = false;
+    runInThunderbird();
+  }
+  if (children == "firefox"){
+    dump("XPCOM Component has been loaded in Firefox \n");
+    isFirefox = true;
+    isThunderbird = false;
 	
-	runInFirefox();
-    }
+    runInFirefox();
+  }
 
     
     
-    /*
+  /*
     var autorec = {};
     loader.loadSubScript('chrome://notifyme/content/autorec.js', autorec);
     autorec.init(XMPP, win);
-    */
+  */
 
     
 }
 
 function runInFirefox(){
-    channel = XMPP.createChannel(
-				 <query xmlns="http://jabber.org/protocol/disco#info">
-				 <feature var="http://jabber.org/protocol/muc"/>
-				 <feature var="http://jabber.org/protocol/muc#user"/>
-				 <feature var="http://jabber.org/protocol/xhtml-im"/>
-				 <feature var="http://jabber.org/protocol/chatstates"/>
-				 </query>);    
+  channel = XMPP.createChannel(
+			       <query xmlns="http://jabber.org/protocol/disco#info">
+			       <feature var="http://jabber.org/protocol/muc"/>
+			       <feature var="http://jabber.org/protocol/muc#user"/>
+			       <feature var="http://jabber.org/protocol/xhtml-im"/>
+			       <feature var="http://jabber.org/protocol/chatstates"/>
+			       </query>);    
 
-    channel.on({
-	    event     : 'message',
-		direction : 'in',
-		}, function(message) {
-	    //var msg = new String(message.stanza.body);
-	    //dump("event: message, direction: in \nmessage.stanza.body = " + msg + "\n");
+  channel.on({
+    event     : 'message',
+	direction : 'in',
+	}, function(message) {
+      //var msg = new String(message.stanza.body);
+      //dump("event: message, direction: in \nmessage.stanza.body = " + msg + "\n");
 
-	    // Detects if msg body is not blank
-	    if(message.stanza.body == undefined){
-		//dump("message.stanza.body == undefined \n");
-	    }
+	
 
-	    /* Detects if sidebar is not Expanded OR
-	       Firefox is minimized OR
-	       Firefox is another desktop OR
-	       Firefox is on current desktop but behind others windows (Firefox 3 only) */
-	    else if((isCompact()) || win.windowState == win.STATE_MINIMIZED || !(win.document.hasFocus && win.document.hasFocus())){
-		msgbody = new String(message.stanza.body);
-		account = message.account;
-		var address = XMPP.JID(message.stanza.@from).address;
+      // Detects if msg body is not blank
+      if(message.stanza.body == undefined){
+	//dump("message.stanza.body == undefined \n");
+      }
 
-		detectMsgTypeNSend(message, address, account);
+      /* Detects if sidebar is not Expanded OR
+	 Firefox is minimized OR
+	 Firefox is another desktop OR
+	 Firefox is on current desktop but behind others windows (Firefox 3 only) */
+      else if((isCompact()) || win.windowState == win.STATE_MINIMIZED || !(win.document.hasFocus && win.document.hasFocus())){
+	msgbody = new String(message.stanza.body);
+	account = message.account;
+	var address = XMPP.JID(message.stanza.@from).address;
+
+	detectMsgTypeNSend(message, address, account);
 		
-	    }
+      }
 
-	    else{
-		//dump("Sidebar is exanded \n");
-	    }
-	});
+      else{
+	//dump("Sidebar is exanded \n");
+      }
+    });
 }
 
 function runInThunderbird(){
-    var wm = Components
-	.classes["@mozilla.org/appshell/window-mediator;1"]
-	.getService(Components.interfaces.nsIWindowMediator);
-    // MEMO: Specifing navigator:browser Notify me won't work with Thunderbird
-    win = wm.getMostRecentWindow("");
-    var sameplaceframe = win.document.getElementById("sameplace-frame");
+  var wm = Components
+    .classes["@mozilla.org/appshell/window-mediator;1"]
+    .getService(Components.interfaces.nsIWindowMediator);
+  // MEMO: Specifing navigator:browser Notify me won't work with Thunderbird
+  win = wm.getMostRecentWindow("");
+  var sameplaceframe = win.document.getElementById("sameplace-frame");
     
 
-    channel = XMPP.createChannel(
-				 <query xmlns="http://jabber.org/protocol/disco#info">
-				 <feature var="http://jabber.org/protocol/muc"/>
-				 <feature var="http://jabber.org/protocol/muc#user"/>
-				 <feature var="http://jabber.org/protocol/xhtml-im"/>
-				 <feature var="http://jabber.org/protocol/chatstates"/>
-				 </query>);    
-    channel.on({
-	    event     : 'message',
-		direction : 'in',
-		}, function(message) {
-	    var msg = new String(message.stanza.body);
-	    dump("event: message, direction: in \nmessage.stanza.body = " + msg + "\n");
+  channel = XMPP.createChannel(
+			       <query xmlns="http://jabber.org/protocol/disco#info">
+			       <feature var="http://jabber.org/protocol/muc"/>
+			       <feature var="http://jabber.org/protocol/muc#user"/>
+			       <feature var="http://jabber.org/protocol/xhtml-im"/>
+			       <feature var="http://jabber.org/protocol/chatstates"/>
+			       </query>);    
+  channel.on({
+    event     : 'message',
+	direction : 'in',
+	}, function(message) {
+      var msg = new String(message.stanza.body);
+      dump("event: message, direction: in \nmessage.stanza.body = " + msg + "\n");
 	    
-	    // Detects if msg body is not blank
-	    if(message.stanza.body == undefined){
-		dump("message.stanza.body == undefined \n");
-	    }
+      // Detects if msg body is not blank
+      if(message.stanza.body == undefined){
+	dump("message.stanza.body == undefined \n");
+      }
 
-	    // Detects if sidebar is expanded
-	    else if(sameplaceframe.collapsed == true){
+      // Detects if sidebar is expanded
+      else if(sameplaceframe.collapsed == true){
 	      
-	      msgbody = new String(message.stanza.body);
-	      account = message.account;
-	      var address = XMPP.JID(message.stanza.@from).address;
+	msgbody = new String(message.stanza.body);
+	account = message.account;
+	var address = XMPP.JID(message.stanza.@from).address;
 	      
-	      detectMsgTypeNSend(message, address, account);
-	      }
-	    else{
-		//dump("Sidebar is exanded \n");
-	    }
-      });
+	detectMsgTypeNSend(message, address, account);
+      }
+      else{
+	//dump("Sidebar is exanded \n");
+      }
+    });
 }
 
 
 
 /* Detects if Sidebar is not expanded */
 function isCompact(){
-    var wm = Components
-	.classes["@mozilla.org/appshell/window-mediator;1"]
-	.getService(Components.interfaces.nsIWindowMediator);
-    // MEMO: Specifing navigator:browser Notify me won't work with Thunderbird
-    win = wm.getMostRecentWindow("navigator:browser");
+  var wm = Components
+    .classes["@mozilla.org/appshell/window-mediator;1"]
+    .getService(Components.interfaces.nsIWindowMediator);
+  // MEMO: Specifing navigator:browser Notify me won't work with Thunderbird
+  win = wm.getMostRecentWindow("navigator:browser");
     
-    if(win.sameplace.isCompact()) return true;
-    else return false;
+  if(win.sameplace.isCompact()) return true;
+  else return false;
 }
 
 function detectMsgTypeNSend(message, address, account){
-    // Detects if message comes from a room and obtain contact nick by resourse
-    if(message.stanza.@type == "groupchat" && roomspopup){
-	var check = message.stanza.toXMLString();
-	if (check.match("jabber:x:delay") != null)
-	    {
-	    }
-	else{
-	    // dump('\n message from room\n');
-	    var nick = XMPP.JID(message.stanza.@from).resource + " from " + XMPP.JID(message.stanza.@from).address;
-	    avatar = utils.getAvatar(account, address, XMPP);
-	    composeAndSend(nick, msgbody, avatar);
-	}
+  // Detects if users wants alert popups 
+  popup = eval(pref.getBoolPref('popup'));
+  roomspopup = eval(pref.getBoolPref('roomspopup'));
+
+  // Detects if message comes from a room and obtain contact nick by resourse
+  if(message.stanza.@type == "groupchat" && roomspopup){
+    var check = message.stanza.toXMLString();
+    if (check.match("jabber:x:delay") != null)
+      {
+      }
+    else{
+      // dump('\n message from room\n');
+      var nick = XMPP.JID(message.stanza.@from).resource + " from " + XMPP.JID(message.stanza.@from).address;
+      avatar = utils.getAvatar(account, address, XMPP);
+      composeAndSend(nick, msgbody, avatar);
     }
+  }
     
-    else if(message.stanza.@type == "chat" && popup){
-	// Obtains contact nick as you aliased it in your contact list, i.e. Ivan for imorgillo@sameplace.cc
-	var nick = XMPP.nickFor(message.account, XMPP.JID(message.stanza.@from).address);
-	avatar = utils.getAvatar(account, address, XMPP);
+  else if(message.stanza.@type == "chat" && popup){
+    // Obtains contact nick as you aliased it in your contact list, i.e. Ivan for imorgillo@sameplace.cc
+    var nick = XMPP.nickFor(message.account, XMPP.JID(message.stanza.@from).address);
+    avatar = utils.getAvatar(account, address, XMPP);
 	
-	composeAndSend(nick, msgbody, avatar);
-    }
+    composeAndSend(nick, msgbody, avatar);
+  }
 }
 
 /*
 // Jabiff legacy. It could be usefull in the future.
 
 function observe(subject, topic, data) {
-    if(data != 'JabBiff')
-        return;
+if(data != 'JabBiff')
+return;
         
-    switch(topic) {
-    case 'alertfinished':
-        this._busy = false;
-        break;
-    case 'alertclickcallback':
-        break;
-    }
+switch(topic) {
+case 'alertfinished':
+this._busy = false;
+break;
+case 'alertclickcallback':
+break;
+}
 }
 */
 
@@ -244,21 +248,21 @@ function observe(subject, topic, data) {
 // Detects if somebody sent you a link, an image or a long message
 function composeAndSend(nick, body, avatar){
 
-    if(body.match("image:") != null || body.match("<img") != null ){
-	utils.showmsgpopup(avatar, nick, "has sent you an image");
-    }
-    else if (body.match("http://") != null || body.match("<a href=") != null ){
-	utils.showmsgpopup(avatar, nick, "has sent you a link");
-    }
-    /*
+  if(body.match("image:") != null || body.match("<img") != null ){
+    utils.showmsgpopup(avatar, nick, "has sent you an image");
+  }
+  else if (body.match("http://") != null || body.match("<a href=") != null ){
+    utils.showmsgpopup(avatar, nick, "has sent you a link");
+  }
+  /*
     else if (body.match("jabber:x:delay") != null){
-	// Does nothing
-	dump('\n msg comes from room history\n');
+    // Does nothing
+    dump('\n msg comes from room history\n');
     }
-    */
-    else{
-	/* Checks if msg body is longer than 50 chars and cuts it */
-	if(body.length > 50) body = body.substring(0,41) + " ...";
-	utils.showmsgpopup(avatar, nick, body);
-    }
+  */
+  else{
+    /* Checks if msg body is longer than 50 chars and cuts it */
+    if(body.length > 50) body = body.substring(0,51) + " ...";
+    utils.showmsgpopup(avatar, nick, body);
+  }
 }
