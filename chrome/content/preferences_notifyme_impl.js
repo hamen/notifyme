@@ -37,3 +37,6 @@ function init() {
 // UTILITIES
 // ----------------------------------------------------------------------
 
+function reset(){
+  pref.setCharPref('statusmessage', "");
+}
