@@ -89,15 +89,6 @@ function init() {
     runInFirefox();
   }
 
-    
-    
-  /*
-    var autorec = {};
-    loader.loadSubScript('chrome://notifyme/content/autorec.js', autorec);
-    autorec.init(XMPP, win);
-  */
-
-    
 }
 
 function runInFirefox(){

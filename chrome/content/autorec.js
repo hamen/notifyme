@@ -23,13 +23,24 @@ var counter = 0;
 var window;
 var XMPP;
 
-// Detects browser window
+
+// Application detecting
+const appCheck = Components
+  .classes["@mozilla.org/preferences-service;1"]
+  .getService(Components.interfaces.nsIPrefService)
+  .getBranch('general.useragent.extra.');
+
 var wm = Components
     .classes["@mozilla.org/appshell/window-mediator;1"]
     .getService(Components.interfaces.nsIWindowMediator);
-// MEMO: Specifing navigator:browser Notify me won't work with Thunderbird
-window = wm.getMostRecentWindow("navigator:browser");
-window = wm.getMostRecentWindow("");
+
+var children = appCheck.getChildList("", {});
+if (children == "thunderbird"){
+  window = wm.getMostRecentWindow("");
+ }
+if (children == "firefox"){
+  window = wm.getMostRecentWindow("navigator:browser");
+ }
 
 // Mozilla Firefox Preferences managing interface
 const prefManager = Components
