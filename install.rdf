@@ -31,6 +31,7 @@
     <em:name>Notify Me</em:name>
     <em:description>Adds notifications to SamePlace</em:description>
     <em:creator>Ivan Morgillo</em:creator>
+    <em:contributor>Francesca De Rosa for NotifyMe logo</em:contributor>
     <em:iconURL>chrome://notifyme/skin/logo.png</em:iconURL>
     <em:updateURL/>
     <em:homepageURL>http://notifyme.hamen.org</em:homepageURL>
