@@ -11,8 +11,8 @@ EXTID=$(NAME)@hamen.org
 #UPDATE_URL=http://hamen.homelinux.org:443/$(NAME)/$(BRANCH)/update.rdf
 #XPI_URL=http://hamen.homelinux.org/$(NAME)/$(BRANCH)/$(NAME)-$(BRANCH).xpi
 
-UPDATE_URL=http://hamen.homelinux.org/notifyme/devel/update.rdf
-XPI_URL=http://hamen.homelinux.org/notifyme/devel/notifyme-devel.xpi
+UPDATE_URL=https://hamen.homelinux.org/notifyme/devel/update.rdf
+XPI_URL=https://hamen.homelinux.org/notifyme/devel/notifyme-devel.xpi
  
 
 # Path for spock (http://hyperstruct.net/projects/spock)
@@ -38,7 +38,6 @@ XML_EDIT=xmlstarlet ed \
 # Targets
 
 release: clean $(FILE)
-	darcs dist -d $(NAME)-$(BRANCH)
 	ln -sf $(FILE) $(NAME)-$(BRANCH).xpi
 	$(SIGN) update.rdf.template >update.rdf
 
