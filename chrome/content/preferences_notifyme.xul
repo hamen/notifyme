@@ -62,7 +62,7 @@
     <separator class="groove" />
     
     <hbox flex="1" align="baseline">
-      <label value="Reset status and status message:" />
+      <label value="Reset stored status and status message:" />
       <button label="Do it!" oncommand="notifymePrefs.reset();"/>
     </hbox>
   </groupbox>

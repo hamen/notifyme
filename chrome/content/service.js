@@ -71,23 +71,24 @@ function init() {
   loader.loadSubScript('chrome://notifyme/content/lib/util_impl.js', utils);
 
     
+  runInFirefox();
 
-  // Application detecting
-  var children = appCheck.getChildList("", {});
-  if (children == "thunderbird"){
-    dump("XPCOM Component has been loaded in Thunderbird \n");
-    isThunderbird = true;
-    isFirefox = false;
+  // // Application detecting
+  // var children = appCheck.getChildList("", {});
+  // if (children == "thunderbird"){
+  //   dump("XPCOM Component has been loaded in Thunderbird \n");
+  //   isThunderbird = true;
+  //   isFirefox = false;
 	
-    runInThunderbird();
-  }
-  if (children == "firefox"){
-    dump("XPCOM Component has been loaded in Firefox \n");
-    isFirefox = true;
-    isThunderbird = false;
+  //   runInThunderbird();
+  // }
+  // if (children == "firefox"){
+  //   dump("XPCOM Component has been loaded in Firefox \n");
+  //   isFirefox = true;
+  //   isThunderbird = false;
 	
-    runInFirefox();
-  }
+  //   runInFirefox();
+  // }
 
 }
 
@@ -210,6 +211,7 @@ function detectMsgTypeNSend(message, address, account){
   }
     
   else if(message.stanza.@type == "chat" && popup){
+    dump("\n Message received. going to call composeAndSend \n");
     // Obtains contact nick as you aliased it in your contact list, i.e. Ivan for imorgillo@sameplace.cc
     var nick = XMPP.nickFor(message.account, XMPP.JID(message.stanza.@from).address);
     avatar = utils.getAvatar(account, address, XMPP);
