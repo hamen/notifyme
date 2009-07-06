@@ -10,6 +10,8 @@ const INTERFACE = Components.interfaces.nsIXMPPPresenceNotificationService;
 /* ---------------------------------------------------------------------- */
 /*                           Template code                                */
 
+dump("\n XPCOM Component: loading...\n");
+
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
@@ -77,3 +79,4 @@ var Module = {
 };
 
 function NSGetModule(aCompMgr, aFileSpec) { return Module; }
+dump("\n XPCOM Component: loaded...\n");

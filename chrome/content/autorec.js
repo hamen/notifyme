@@ -25,22 +25,22 @@ var XMPP;
 
 
 // Application detecting
-const appCheck = Components
-  .classes["@mozilla.org/preferences-service;1"]
-  .getService(Components.interfaces.nsIPrefService)
-  .getBranch('general.useragent.extra.');
+// const appCheck = Components
+//   .classes["@mozilla.org/preferences-service;1"]
+//   .getService(Components.interfaces.nsIPrefService)
+//   .getBranch('general.useragent.extra.');
 
 var wm = Components
-    .classes["@mozilla.org/appshell/window-mediator;1"]
-    .getService(Components.interfaces.nsIWindowMediator);
+  .classes["@mozilla.org/appshell/window-mediator;1"]
+  .getService(Components.interfaces.nsIWindowMediator);
 
-var children = appCheck.getChildList("", {});
-if (children == "thunderbird"){
-  window = wm.getMostRecentWindow("");
- }
-if (children == "firefox"){
-  window = wm.getMostRecentWindow("navigator:browser");
- }
+// var children = appCheck.getChildList("", {});
+// if (children == "thunderbird"){
+//   window = wm.getMostRecentWindow("");
+//  }
+// if (children == "firefox"){
+//   window = wm.getMostRecentWindow("navigator:browser");
+//  }
 
 // Mozilla Firefox Preferences managing interface
 const prefManager = Components
@@ -91,19 +91,22 @@ function finish() {
 }
 
 function receivedDisconnection(account, XMPP) {
-
-    window.setTimeout(function() {
-	    XMPP.up(account, function() {
-		    setSM(account, XMPP);
-
-		    // Rooms auto-join
-		    var check = prefManager.getBoolPref('autojoin');
-		    if (check){
-			joinRooms(account, XMPP);
-		    }
-		});
+  window = wm.getMostRecentWindow("navigator:browser");
+  if (window){
+    window.focus();
+      window.setTimeout(function() {
+	  XMPP.up(account, function() {
+	      setSM(account, XMPP);
+	      
+	      // Rooms auto-join
+	      var check = prefManager.getBoolPref('autojoin');
+	      if (check){
+		joinRooms(account, XMPP);
+	      }
+	    });
 	}, 3000)
-	}
+      }
+}
 
 function newSM(presence){
     if(presence.stanza.status != undefined){
@@ -117,36 +120,46 @@ function storeSM(msg){
 }
 
 function getSM(){
+  if (prefManager.getCharPref('statusmessage') != ""){
     var msg = prefManager.getCharPref('statusmessage');
     return msg;
+  }
 }
 
 function setSM(acc, XMPP){
 
     if (counter != 3){
-	window.setTimeout(function() {
-		var statusmessage = getSM();
-		XMPP.send(acc, statusmessage);
+      window = wm.getMostRecentWindow("navigator:browser");
+      if (window){
+	window.focus();
+	  window.setTimeout(function() {
+	      var statusmessage = getSM();
+	      XMPP.send(acc, statusmessage);
 	    },7000);
 	counter++;
-    } else{
+      } else{
 	window.setTimeout(function() {}, 1000000);
 	counter = 0;
+      }
+      return;
     }
-    return;
 }
 
 function joinRooms(acc, XMPP){
+  window = wm.getMostRecentWindow("navigator:browser");
+  if (window){
+    window.focus();
     window.setTimeout(function() {
-	    //alert('autojoin: ');
-	    roomsarray = eval(prefManager.getCharPref('rooms2join'));
+	//alert('autojoin: ');
+	roomsarray = eval(prefManager.getCharPref('rooms2join'));
 	    
-	    akk = acc;
-	    x4m = XMPP;
+	akk = acc;
+	x4m = XMPP;
 
-	    roomsarray.forEach(join);
+	roomsarray.forEach(join);
 	    
-	}, 5000);
+      }, 5000);
+  }
 }
 
 function join(element, index, array){

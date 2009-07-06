@@ -63,22 +63,22 @@ function getAvatar(account, address, XMPP){
 
 // ShowS an alert popup and play a sound alert
 function showmsgpopup(avatar, contact, text){
-    
-    /*    
-    // Listening for callbacks 
-    var listener = {
-	observe: function(subject, topic, data) {
-	    dump("subject=" + subject + ", topic=" + topic + ", data=" + data);
+  dump("\n Entered showmsgpopup in util_impl \n");
+  /*    
+  // Listening for callbacks 
+  var listener = {
+  observe: function(subject, topic, data) {
+  dump("subject=" + subject + ", topic=" + topic + ", data=" + data);
 	}
-    }
-    alertService.showAlertNotification(avatar, contact, text, true, "cookie", listener);
-    */
-    alertService.showAlertNotification(avatar, contact, text, false, "", null);
-    
-    // Forces avatar to default avatar due a lag in avatar update
-    //avatar = defaultAvatar;
-
-    // Checks prefs to play / not to play a sound alert
-    var sound = eval(pref.getBoolPref('sound'));
-    if (sound) player.play(music);
+	}
+	alertService.showAlertNotification(avatar, contact, text, true, "cookie", listener);
+  */
+  alertService.showAlertNotification(avatar, contact, text, false, "", null);
+  
+  // Forces avatar to default avatar due a lag in avatar update
+  //avatar = defaultAvatar;
+  
+  // Checks prefs to play / not to play a sound alert
+  var sound = eval(pref.getBoolPref('sound'));
+  if (sound) player.play(music);
 }
