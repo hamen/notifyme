@@ -27,7 +27,7 @@
     <em:iconURL>chrome://notifyme/skin/logo.png</em:iconURL>
     <em:updateURL/>
     <em:homepageURL>http://notifyme.hamen.org</em:homepageURL>
-    <em:updateKey>MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCzf8xdR51r2snb+UKlVN5nxZew1b5ofyhotSm0rfjG0+4Po0VoplCwIIz5Okse3WUsaO2iFobRihqRoJkl8Z1+FVnrx9Yb6gO5Gkg4nCG252YktO2o1+RLAIIcH6wr4NfTaL6Lr2JvPbsKRoexZCWHEjFqSPDXJ7AhsR5O5SDtZwIDAQAB</em:updateKey>
+    <em:updateKey>MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC+1X2rtbNSVFrmuFDDzyCko16rf3pZlj2lTtzfUZVafBd8TCrd9yBR/JUTMppAc6ucUVPNQvtzkS5N4lY9OdDlvgQOTvU8czlz/lybugOFwxgje/dG4ePoNmnKy2LsrLaCfvQfxDJKFune3FR4WJAqhcXkZDjIiyIP9odvREaYaQIDAQAB</em:updateKey>
     <em:optionsURL>chrome://sameplace/content/preferences/preferences.xul</em:optionsURL>
     <em:requires>
       <Description>

@@ -22,9 +22,8 @@ var Dialog = {
   onLoad: function init() {
     // initialization code
     this.initialized = true;
-	
-    },
-
+  },
+  
   notifyMe: function showDialog(xulPopupNode) {
 	/* Initialize interfaces to manage prefs */
 	const pref = Components
@@ -136,7 +135,7 @@ var Dialog = {
 	else {
 	    // User clicked cancel. Typically, nothing is done here.
 	}
-    }
+  }
 };
 
 // GLOBALS
@@ -161,7 +160,6 @@ loader.loadSubScript('chrome://notifyme/content/lib/util_impl.js', utils);
 var autorec = {};
 loader.loadSubScript('chrome://notifyme/content/autorec.js', autorec);
 autorec.init(XMPP);
-
 
 // ------------------------------------------------------------------------
 

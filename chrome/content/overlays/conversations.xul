@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://sameplace/skin/overlay.css" type="text/css"?>
+<?xml-stylesheet href="chrome://sameplace/skin/toolbar-button.css" type="text/css"?>
+<!--
+  This file is part of 'Notify me' (SamePlace addon).
+
+  'Notify me' is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License,
+  or any later version.
+  
+  'Notify me' is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with 'Notify me'.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!DOCTYPE overlay SYSTEM "chrome://notifyme/locale/overlay.dtd">
+
+<overlay id="notifyme-overlay"
+	 xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <popup id="conversation-menu">
+    <menu label="&menu.context.inviteuser.label;">          
+      <menupopup oncommand="conversations.selectedContact(event);"
+                 onpopupshowing="conversations.sendTo.showingPopup(event);"
+                 onpopuphidden="conversations.sendTo.hiddenPopup(event);"/>
+    </menu> 
+  </popup>
+  <script type="application/x-javascript;version=1.7"
+	  src="conversations.js"/>
+    <script type="application/x-javascript;version=1.7" 
+	    src="chrome://sameplace/content/conversations.js"/>
+</overlay>
