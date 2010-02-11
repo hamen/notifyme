@@ -150,8 +150,38 @@ var sameplacepp = {
 			var nick =  XMPP.nickFor(presence.session.name,
 			XMPP.JID(presence.stanza.@from).address);
 			*/
-		       detectedContact(presence, user);
+		       sameplacepp.detectedContact(presence, user);
 		   });
+    },
+    detectedContact: function(presence, user) {
+	var text;
+	var account = presence.account;
+	var avatar = utils.getAvatar(account, XMPP.JID(presence.stanza.@from).address, XMPP);
+	
+	if(presence.stanza.@type == 'unavailable' && user.boxes.offline && user.counts.offline < 1){
+	    utils.showmsgpopup(avatar, user.nick, "has changed status to UNAVAILABLE", false);	
+	    user.counts.offline = 1;
+	    window.getAttention();
+	}
+	else if (presence.stanza.show == 'away' && user.boxes.away == true && user.counts.away < 1){
+	    utils.showmsgpopup(avatar, user.nick, "has changed status to AWAY", false);	
+	    user.counts.away = 1;
+	    window.getAttention();
+	}
+	else if (presence.stanza.show == 'dnd' && user.boxes.busy && user.counts.busy < 1){
+	    utils.showmsgpopup(avatar, user.nick, "has changed status to BUSY", false);	
+	    user.counts.busy = 1;
+	    window.getAttention();
+	}
+	else if (presence.stanza.@type == undefined &&
+		 presence.stanza.show != 'dnd' &&
+		 presence.stanza.show != 'away' &&
+		 user.boxes.online && user.counts.online < 1){
+	    utils.showmsgpopup(avatar, user.nick, "has changed status to AVAILABLE", false);	
+	    user.counts.online = 1;
+	    window.getAttention();
+	}
+	
     }
 };
 
@@ -194,38 +224,6 @@ window.addEventListener("load", function(e) {
 	sameplacepp.onLoad(e);
 	
     }, false);
-
-
-function detectedContact(presence, user) {
-    var text;
-    var account = presence.account;
-    var avatar = utils.getAvatar(account, XMPP.JID(presence.stanza.@from).address, XMPP);
-    
-    if(presence.stanza.@type == 'unavailable' && user.boxes.offline && user.counts.offline < 1){
-	utils.showmsgpopup(avatar, user.nick, "has changed status to UNAVAILABLE", false);	
-	user.counts.offline = 1;
-	window.getAttention();
-    }
-    else if (presence.stanza.show == 'away' && user.boxes.away == true && user.counts.away < 1){
-	utils.showmsgpopup(avatar, user.nick, "has changed status to AWAY", false);	
-	user.counts.away = 1;
-	window.getAttention();
-    }
-    else if (presence.stanza.show == 'dnd' && user.boxes.busy && user.counts.busy < 1){
-	utils.showmsgpopup(avatar, user.nick, "has changed status to BUSY", false);	
-	user.counts.busy = 1;
-	window.getAttention();
-    }
-    else if (presence.stanza.@type == undefined &&
-	     presence.stanza.show != 'dnd' &&
-	     presence.stanza.show != 'away' &&
-	     user.boxes.online && user.counts.online < 1){
-	utils.showmsgpopup(avatar, user.nick, "has changed status to AVAILABLE", false);	
-	user.counts.online = 1;
-	window.getAttention();
-    }
-    
-}
 
 sameplacepp.User = function( a, n, b, c){
     this.address = a;
