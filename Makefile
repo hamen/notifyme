@@ -5,14 +5,16 @@
 NAME=$(shell basename $(shell readlink -f ..))
 BRANCH=$(shell basename $(shell pwd))
 
+HOST=192.168.1.6
+
 # Modify domain and URLs to suit yourself here
 
 EXTID=$(NAME)@hamen.org
-#UPDATE_URL=http://hamen.homelinux.org:443/$(NAME)/$(BRANCH)/update.rdf
-#XPI_URL=http://hamen.homelinux.org/$(NAME)/$(BRANCH)/$(NAME)-$(BRANCH).xpi
+UPDATE_URL=http://hamen.homelinux.org/$(NAME)/$(BRANCH)/update.rdf
+XPI_URL=http://hamen.homelinux.org/$(NAME)/$(BRANCH)/$(NAME)-$(BRANCH).xpi
 
-UPDATE_URL=http://hamen.homelinux.org/notifyme/devel/update.rdf
-XPI_URL=http://hamen.homelinux.org/notifyme/devel/notifyme-devel.xpi
+#UPDATE_URL=http://hamen.homelinux.org/notifyme/devel/update.rdf
+#XPI_URL=http://hamen.homelinux.org/notifyme/devel/notifyme-devel.xpi
  
 
 # Path for spock (http://hyperstruct.net/projects/spock)
@@ -64,3 +66,8 @@ clean:
 	rm -rf dist *.xpi update.rdf
 
 .PHONY: xpi release clean
+
+push:
+	scp update.rdf $(FILE) ivan@$(HOST):/var/www/$(NAME)/$(BRANCH)
+	ssh -l ivan $(HOST) rm /var/www/$(NAME)/$(BRANCH)/$(NAME)-$(BRANCH).xpi
+	ssh -l ivan $(HOST) ln -s /var/www/$(NAME)/$(BRANCH)/$(FILE)  /var/www/$(NAME)/$(BRANCH)/$(NAME)-$(BRANCH).xpi
