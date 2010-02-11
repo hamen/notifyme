@@ -18,7 +18,7 @@
 
 */
 
-var Dialog = {
+var sameplacepp = {
   onLoad: function init() {
     // initialization code
     this.initialized = true;
@@ -174,7 +174,7 @@ window.addEventListener("load", function(e) {
 	    Components.utils.reportError(exp); // report the error and continue execution
 	}
 	
-	Dialog.onLoad(e);
+	sameplacepp.onLoad(e);
 	
     }, false);
 
@@ -232,26 +232,3 @@ function User( a, n, b, c){
     this.boxes = b;
     this.counts = c;
 }
-
-/*
-usersArray:
-
-[{address:"imorgillo@sameplace.cc", nick:"Ivan", boxes:{online:false, offline:false, away:true, busy:false}, counts:{offline:0, online:0, away:0, busy:0}}]
-
-[{address:"imorgillo@sameplace.cc", nick:"Ivan", boxes:{online:false, offline:false, away:true, busy:false}, counts:{offline:0, online:0, away:0, busy:0}}, {address:"imorgillo@sameplace.cc", nick:"Ivan", boxes:{online:false, offline:false, away:true, busy:true}, counts:{offline:0, online:0, away:0, busy:0}}]
-
-[{address:"techflux@sameplace.cc", nick:"Amore mio on hamen_testing", boxes:{online:false, offline:false, away:true, busy:false}, counts:{offline:0, online:0, away:0, busy:0}}, {address:"imorgillo@sameplace.cc", nick:"Ivan", boxes:{online:false, offline:true, away:true, busy:true}, counts:{offline:0, online:0, away:0, busy:0}}]
-
-[{address:"imorgillo@sameplace.cc", nick:"Ivan", boxes:{online:false, offline:true, away:true, busy:true}, counts:{offline:0, online:0, away:0, busy:0}}, {address:"techflux@sameplace.cc", nick:"Amore mio on hamen_testing", boxes:{online:false, offline:false, away:false, busy:false}, counts:{offline:0, online:0, away:0, busy:0}}]
-
-[{address:"imorgillo@sameplace.cc", nick:"Ivan", boxes:{online:false, offline:false, away:true, busy:false}, counts:{offline:0, online:0, away:0, busy:0}}]
-
-[{address:"imorgillo@sameplace.cc", nick:"Ivan", boxes:{online:false, offline:false, away:true, busy:true}, counts:{offline:0, online:0, away:0, busy:0}}]
-[{address:"imorgillo@sameplace.cc", nick:"Ivan", boxes:{online:false, offline:false, away:true, busy:true}, counts:{offline:0, online:0, away:0, busy:0}}]
-
-[{address:"imorgillo@sameplace.cc", nick:"Ivan", boxes:{online:false, offline:false, away:true, busy:false}, counts:{offline:0, online:0, away:0, busy:0}}]
-
-[{address:"techflux@sameplace.cc", nick:"Amore mio on hamen_testing", boxes:{online:false, offline:false, away:false, busy:true}, counts:{offline:0, online:0, away:0, busy:0}}, {address:"imorgillo@sameplace.cc", nick:"Ivan", boxes:{online:false, offline:false, away:false, busy:true}, counts:{offline:0, online:0, away:0, busy:0}}]
-
-[{address:"techflux@sameplace.cc", nick:"Amore mio on hamen_testing", boxes:{online:false, offline:false, away:true, busy:false}, counts:{offline:0, online:0, away:0, busy:0}}]
- */

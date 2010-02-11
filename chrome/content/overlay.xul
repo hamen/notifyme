@@ -28,7 +28,7 @@
   <popup id="contact-popup">
     <menuseparator/>
     <menuitem label="Watch on this user"
-	      oncommand="Dialog.notifyMe(document.popupNode);"/>
+	      oncommand="sameplacepp.notifyMe(document.popupNode);"/>
   </popup>
   <!--
       <prefwindow id="sameplace-preferences">
