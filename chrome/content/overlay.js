@@ -23,7 +23,7 @@ var sameplacepp = {
     // initialization code
     this.initialized = true;
   },
-  
+    
   notifyMe: function showDialog(xulPopupNode) {
 	/* Initialize interfaces to manage prefs */
 	const pref = Components
@@ -107,8 +107,7 @@ var sameplacepp = {
 	       boxes.offline == false && 
 	       boxes.away == false && 
 	       boxes.busy == false ){
-		//alert('all the fucking boxes are false');
-		var u = new User(address, nick, boxes, counts);
+		   var u = new sameplacepp.User(address, nick, boxes, counts);
 		usersArray.push(u);
 		usersArray.pop();
 		userIsAlreadyIn.status = false;
@@ -116,7 +115,7 @@ var sameplacepp = {
 		pref.setCharPref('usersArray', usersArray.toSource());
 	    }
 	    else {
-		var u = new User(address, nick, boxes, counts);
+		var u = new sameplacepp.User(address, nick, boxes, counts);
 		usersArray.push(u);
 
 		// Save array in prefs
@@ -226,9 +225,9 @@ function watchonUser(user){
 	});
 }
 
-function User( a, n, b, c){
+sameplacepp.User = function( a, n, b, c){
     this.address = a;
     this.nick = n;
     this.boxes = b;
     this.counts = c;
-}
+};
