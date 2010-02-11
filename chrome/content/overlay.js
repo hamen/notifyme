@@ -120,7 +120,7 @@ var sameplacepp = {
 
 		// Save array in prefs
 		pref.setCharPref('usersArray', usersArray.toSource());
-		watchonUser(u);
+		sameplacepp.watchonUser(u);
 	    } 
 
 	    //
@@ -134,7 +134,25 @@ var sameplacepp = {
 	else {
 	    // User clicked cancel. Typically, nothing is done here.
 	}
-  }
+  },
+    watchonUser: function(user) {
+	// Start to sniff the channel
+	var channel = XMPP.createChannel();
+	
+	channel.on({
+		       event     : 'presence',
+		       direction : 'in',
+		       stanza : function(s) {
+			   return XMPP.JID(s.@from).address == user.address;
+		       }},
+		   function(presence) { 
+		       /*
+			var nick =  XMPP.nickFor(presence.session.name,
+			XMPP.JID(presence.stanza.@from).address);
+			*/
+		       detectedContact(presence, user);
+		   });
+    }
 };
 
 // GLOBALS
@@ -207,22 +225,6 @@ function detectedContact(presence, user) {
 	window.getAttention();
     }
     
-}
-
-function watchonUser(user){
-// Start to sniff the channel
-    var channel = XMPP.createChannel();
-
-    channel.on({
-	    event     : 'presence',
-	    direction : 'in',
-		stanza : function(s) {
-		return XMPP.JID(s.@from).address == user.address;
-	    }},
-	function(presence) { 
-	    //var nick =  XMPP.nickFor(presence.session.name, XMPP.JID(presence.stanza.@from).address);
-	    detectedContact(presence, user);
-	});
 }
 
 sameplacepp.User = function( a, n, b, c){
