@@ -120,10 +120,14 @@ function storeSM(msg){
 }
 
 function getSM(){
-  if (prefManager.getCharPref('statusmessage') != ""){
-    var msg = prefManager.getCharPref('statusmessage');
-    return msg;
-  }
+    try {
+	if (prefManager.getCharPref('statusmessage') != ""){
+	    var msg = prefManager.getCharPref('statusmessage');
+	    return msg;
+	}
+    } catch (e) {
+	storeSM(".");
+    }
 }
 
 function setSM(acc, XMPP){
