@@ -19,10 +19,25 @@
 */
 
 var sameplacepp = {
-  onLoad: function init() {
-    // initialization code
-    this.initialized = true;
-  },
+    onLoad: function init() {
+	// initialization code
+	this.initialized = true;
+	sameplacepp.loader.loadSubScript('chrome://notifyme/content/lib/util_impl.js', sameplacepp.utils);
+	sameplacepp.loader.loadSubScript('chrome://notifyme/content/autorec.js', sameplacepp.autorec);
+	sameplacepp.autorec.init(XMPP);
+    },
+
+    utils: {},
+    autorec: {},
+
+    loader: Components.classes['@mozilla.org/moz/jssubscript-loader;1']
+	.getService(Components.interfaces.mozIJSSubScriptLoader),
+    /*
+    alertsService: Components.classes["@mozilla.org/alerts-service;1"]
+     .getService(Components.interfaces.nsIAlertsService),
+     */
+    usersArray: new Array(),
+    userIsAlreadyIn: {},
     
   notifyMe: function showDialog(xulPopupNode) {
 	/* Initialize interfaces to manage prefs */
@@ -40,12 +55,12 @@ var sameplacepp = {
 	var nick = XMPP.nickFor(account, address);
 	//alert('nick is: ' + nick);
 
-	usersArray = eval(pref.getCharPref('usersArray'));
+	sameplacepp.usersArray = eval(pref.getCharPref('usersArray'));
 	
-	var length = usersArray.length;
+	var length = sameplacepp.usersArray.length;
 	var i;
 	for (i=0; i<length; i++){
-	    var user = usersArray[i];
+	    var user = sameplacepp.usersArray[i];
 	    
 	    if(user.address == address){
 		//alert('gia\' presente');
@@ -60,13 +75,13 @@ var sameplacepp = {
 		    out:null
 		};
 		
-		userIsAlreadyIn = {status: true,
+		sameplacepp.userIsAlreadyIn = {status: true,
 				   index: i};
 	    }
 	}
 	
 	
-	if(!userIsAlreadyIn.status){
+	if(!sameplacepp.userIsAlreadyIn.status){
 	    var params = {
 		inn:{
 		    nick:nick,
@@ -100,33 +115,33 @@ var sameplacepp = {
 	    counts.away = 0;
 	    counts.busy = 0;
 
-	    if(userIsAlreadyIn.status) usersArray.splice(userIsAlreadyIn.index,1);
+	    if(sameplacepp.userIsAlreadyIn.status) sameplacepp.usersArray.splice(sameplacepp.userIsAlreadyIn.index,1);
 	    
-	    if(userIsAlreadyIn.status && 
+	    if(sameplacepp.userIsAlreadyIn.status && 
 	       boxes.online == false && 
 	       boxes.offline == false && 
 	       boxes.away == false && 
 	       boxes.busy == false ){
 		   var u = new sameplacepp.User(address, nick, boxes, counts);
-		usersArray.push(u);
-		usersArray.pop();
-		userIsAlreadyIn.status = false;
+		   sameplacepp.usersArray.push(u);
+		   sameplacepp.usersArray.pop();
+		   sameplacepp.userIsAlreadyIn.status = false;
 
-		pref.setCharPref('usersArray', usersArray.toSource());
+		pref.setCharPref('usersArray', sameplacepp.usersArray.toSource());
 	    }
 	    else {
 		var u = new sameplacepp.User(address, nick, boxes, counts);
-		usersArray.push(u);
+		sameplacepp.usersArray.push(u);
 
 		// Save array in prefs
-		pref.setCharPref('usersArray', usersArray.toSource());
+		pref.setCharPref('usersArray', sameplacepp.usersArray.toSource());
 		sameplacepp.watchonUser(u);
 	    } 
 
 	    //
 	    /* then
 	    var array = new Array();
-	    array = eval(pref.getCharPref('usersArray'));
+	    array = eval(pref.getCharPref('sameplacepp.usersArray'));
 	    */
 
 	    
@@ -156,20 +171,20 @@ var sameplacepp = {
     detectedContact: function(presence, user) {
 	var text;
 	var account = presence.account;
-	var avatar = utils.getAvatar(account, XMPP.JID(presence.stanza.@from).address, XMPP);
+	var avatar = sameplacepp.utils.getAvatar(account, XMPP.JID(presence.stanza.@from).address, XMPP);
 	
 	if(presence.stanza.@type == 'unavailable' && user.boxes.offline && user.counts.offline < 1){
-	    utils.showmsgpopup(avatar, user.nick, "has changed status to UNAVAILABLE", false);	
+	    sameplacepp.utils.showmsgpopup(avatar, user.nick, "has changed status to UNAVAILABLE", false);	
 	    user.counts.offline = 1;
 	    window.getAttention();
 	}
 	else if (presence.stanza.show == 'away' && user.boxes.away == true && user.counts.away < 1){
-	    utils.showmsgpopup(avatar, user.nick, "has changed status to AWAY", false);	
+	    sameplacepp.utils.showmsgpopup(avatar, user.nick, "has changed status to AWAY", false);	
 	    user.counts.away = 1;
 	    window.getAttention();
 	}
 	else if (presence.stanza.show == 'dnd' && user.boxes.busy && user.counts.busy < 1){
-	    utils.showmsgpopup(avatar, user.nick, "has changed status to BUSY", false);	
+	    sameplacepp.utils.showmsgpopup(avatar, user.nick, "has changed status to BUSY", false);	
 	    user.counts.busy = 1;
 	    window.getAttention();
 	}
@@ -177,36 +192,13 @@ var sameplacepp = {
 		 presence.stanza.show != 'dnd' &&
 		 presence.stanza.show != 'away' &&
 		 user.boxes.online && user.counts.online < 1){
-	    utils.showmsgpopup(avatar, user.nick, "has changed status to AVAILABLE", false);	
+	    sameplacepp.utils.showmsgpopup(avatar, user.nick, "has changed status to AVAILABLE", false);	
 	    user.counts.online = 1;
 	    window.getAttention();
 	}
 	
     }
 };
-
-// GLOBALS
-var usersArray = new Array();
-var userIsAlreadyIn = {};
-var Cc = Components.classes;
-var Ci = Components.interfaces;
-
-const loader = Cc['@mozilla.org/moz/jssubscript-loader;1']
-    .getService(Ci.mozIJSSubScriptLoader);
-
-const alertsService = Components.classes["@mozilla.org/alerts-service;1"]
-                              .getService(Components.interfaces.nsIAlertsService);
-
-
-
-
-// EXTERNAL SCRIPTS
-var utils = {};
-loader.loadSubScript('chrome://notifyme/content/lib/util_impl.js', utils);
-
-var autorec = {};
-loader.loadSubScript('chrome://notifyme/content/autorec.js', autorec);
-autorec.init(XMPP);
 
 // ------------------------------------------------------------------------
 
