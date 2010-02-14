@@ -155,7 +155,7 @@ autorec.joinRooms = function(acc, XMPP) {
 				      autorec.akk = acc;
 				      autorec.x4m = XMPP;
 
-				      roomsarray.forEach(autorec.join);
+				      autorec.roomsarray.forEach(autorec.join);
 				      
 				  }, 5000);
     }
