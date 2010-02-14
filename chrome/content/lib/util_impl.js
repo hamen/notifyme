@@ -17,35 +17,13 @@
   Ivan Morgillo < imorgillo [at] sanniolug [dot] org >
 
 */
-// INIZIALIZATIONS
-
-// Manages prefs
-const pref = Components
-    .classes["@mozilla.org/preferences-service;1"]
-    .getService(Components.interfaces.nsIPrefService)
-    .getBranch('extensions.notifyme.');
-
-// Inizialize popup alert 
-const alertService = Components
-    .classes['@mozilla.org/alerts-service;1']
-    .getService(Components.interfaces.nsIAlertsService);
-
-// Initialize interfaces to play a sound alert
-var player = Components.classes["@mozilla.org/sound;1"].createInstance(Components.interfaces.nsISound) ;
-var ioservice = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService) ;
-var music = ioservice.newURI ("chrome://notifyme/content/alert.wav" , "" , null ) ; 
-
-// GLOBALS
-const defaultAvatar = 'chrome://notifyme/skin/logo96.png';
-
-// NAMESPACES
-const ns_x4m_in = 'http://hyperstruct.net/xmpp4moz/protocol/internal';
-const ns_vcard  = 'vcard-temp';
-
-// ------------------------------------------------------------------
 
 function getAvatar(account, address, XMPP){
-    // address is something like hamen_testing2@sameplace.cc
+    const defaultAvatar = 'chrome://notifyme/skin/logo96.png';
+    const ns_vcard  = 'vcard-temp';
+    const ns_x4m_in = 'http://hyperstruct.net/xmpp4moz/protocol/internal';
+
+    // address is something like imorgillo@sameplace.cc
     var avatar;
 
     XMPP.send(account,
@@ -60,25 +38,42 @@ function getAvatar(account, address, XMPP){
     return avatar;
 }
 
-
 // ShowS an alert popup and play a sound alert
 function showmsgpopup(avatar, contact, text){
-  dump("\n Entered showmsgpopup in util_impl \n");
-  /*    
-  // Listening for callbacks 
-  var listener = {
-  observe: function(subject, topic, data) {
-  dump("subject=" + subject + ", topic=" + topic + ", data=" + data);
+    const pref = Components
+	.classes["@mozilla.org/preferences-service;1"]
+	.getService(Components.interfaces.nsIPrefService)
+	.getBranch('extensions.notifyme.');
+    
+    const alertService = Components
+	.classes['@mozilla.org/alerts-service;1']
+	.getService(Components.interfaces.nsIAlertsService);
+
+    var player = Components
+	.classes["@mozilla.org/sound;1"]
+	.createInstance(Components.interfaces.nsISound) ;
+    var ioservice = Components
+	.classes["@mozilla.org/network/io-service;1"]
+	.getService(Components.interfaces.nsIIOService) ;
+    var music = ioservice.newURI ("chrome://notifyme/content/alert.wav" , "" , null ) ; 
+
+    /*    
+     // Listening for callbacks 
+     var listener = {
+     observe: function(subject, topic, data) {
+     dump("subject=" + subject + ", topic=" + topic + ", data=" + data);
+     }
+     }
+     alertService.showAlertNotification(avatar, contact, text, true, "cookie", listener);
+     */
+    alertService.showAlertNotification(avatar, contact, text, false, "", null);
+    
+    // Forces avatar to default avatar due a lag in avatar update
+    //avatar = defaultAvatar;
+    
+    // Checks prefs to play / not to play a sound alert
+    var sound = eval(pref.getBoolPref('sound'));
+    if (sound) {
+	player.play(music);
 	}
-	}
-	alertService.showAlertNotification(avatar, contact, text, true, "cookie", listener);
-  */
-  alertService.showAlertNotification(avatar, contact, text, false, "", null);
-  
-  // Forces avatar to default avatar due a lag in avatar update
-  //avatar = defaultAvatar;
-  
-  // Checks prefs to play / not to play a sound alert
-  var sound = eval(pref.getBoolPref('sound'));
-  if (sound) player.play(music);
 }
