@@ -23,12 +23,12 @@ var sameplacepp = {
 	// initialization code
 	this.initialized = true;
 	sameplacepp.loader.loadSubScript('chrome://notifyme/content/lib/util_impl.js', sameplacepp.utils);
-	sameplacepp.loader.loadSubScript('chrome://notifyme/content/autorec.js', sameplacepp.autorec);
-	sameplacepp.autorec.init(XMPP);
+	sameplacepp.loader.loadSubScript('chrome://notifyme/content/autorec.js', sameplacepp.arec);
+	sameplacepp.arec.autorec.init(XMPP);
     },
 
     utils: {},
-    autorec: {},
+    arec: {},
 
     loader: Components.classes['@mozilla.org/moz/jssubscript-loader;1']
 	.getService(Components.interfaces.mozIJSSubScriptLoader),
