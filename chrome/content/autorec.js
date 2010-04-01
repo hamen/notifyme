@@ -120,9 +120,9 @@ autorec.getSM = function() {
 	    return msg;
 	}
     } catch (e) {
-	autorec.storeSM(".");
+	autorec.storeSM("_");
     }
-    return ".";
+    return "_";
 };
 
 autorec.setSM = function(acc, XMPP) {

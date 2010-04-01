@@ -26,7 +26,7 @@
 	ondialogcancel="return onCancel();"
 	onload="onLoad();">
 
-<script type="application/x-javascript" src="chrome://notifyme/content/dialog.js"/>
+<script type="application/x-javascript" src="chrome://notifyme/content/watchOnUser.js"/>
 <grid>
   <columns><column/><column/></columns>
   <rows>

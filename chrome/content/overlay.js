@@ -96,7 +96,7 @@ var sameplacepp = {
 	// Opens Dialog and passes clicked contact JID address to it 
 	var checkboxes;
 
-	window.openDialog("chrome://notifyme/content/dialog.xul", "",
+	window.openDialog("chrome://notifyme/content/watchOnUser.xul", "",
 			  "chrome, dialog, modal, resizable=yes", params).focus();
 	
 	if (params.out) {
