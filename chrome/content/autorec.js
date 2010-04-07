@@ -23,6 +23,10 @@ var autorec = {
     XMPP: {},
     x4m: {},
     akk: {},
+    
+    loader: Components.classes['@mozilla.org/moz/jssubscript-loader;1']
+     	.getService(Components.interfaces.mozIJSSubScriptLoader),
+    utils: {},
 
     wm: Components
 	.classes["@mozilla.org/appshell/window-mediator;1"]
@@ -33,6 +37,7 @@ var autorec = {
 	.getBranch('extensions.notifyme.'),
 
     init: function(XMPP) {
+	autorec.loader.loadSubScript('chrome://notifyme/content/lib/util_impl.js', autorec.utils);
 	autorec.XMPP = XMPP;
 
 	autorec.channel = XMPP.createChannel();
@@ -149,21 +154,22 @@ autorec.joinRooms = function(acc, XMPP) {
     if (autorec.window){
 	autorec.window.focus();
 	autorec.window.setTimeout(function() {
-				      //alert('autojoin: ');
-				      autorec.roomsarray = eval(autorec.prefManager.getCharPref('rooms2join'));
-				      
-				      autorec.akk = acc;
-				      autorec.x4m = XMPP;
-
-				      autorec.roomsarray.forEach(autorec.join);
-				      
+				      autorec.roomsarray = autorec.utils.getJSON().parse(autorec.prefManager.getCharPref('rooms2join'));
+				     
+				      for (var i = 0; i < autorec.roomsarray.length; i++){
+					  // dump("acc: " + acc + "\n" + 
+					  //      "autorec.roomsarray[i].userAccount: " +
+					  //      autorec.roomsarray[i].userAccount + "\n" +
+					  //      "acc.indexOf(autorec.roomsarray[i].userAccount): " + 
+					  //      acc.indexOf(autorec.roomsarray[i].userAccount));
+					  if (acc.indexOf(autorec.roomsarray[i].userAccount) == 0){
+					      XMPP.send(acc, '<presence to="'+ 
+							autorec.roomsarray[i].room + autorec.roomsarray[i].userNick +
+							'"><x xmlns="http://jabber.org/protocol/muc"/></presence>');
+					      }
+				      }
 				  }, 5000);
     }
-};
-
-autorec.join = function(element, index, array) {
-    // alert('account is: ' + akk + ' and room is: ' + element);
-    autorec.x4m.send(autorec.akk, '<presence to="'+ element +'"><x xmlns="http://jabber.org/protocol/muc"/></presence>');
 };
 
 autorec.printElt = function(element, index, array) {

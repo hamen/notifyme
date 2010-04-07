@@ -23,7 +23,7 @@
 <!DOCTYPE overlay SYSTEM "chrome://notifyme/locale/overlay.dtd">
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  
+  <script type="application/x-javascript;version=1.7" src="chrome://xmpp4moz/content/xmpp.js"/>  
 <prefpane id="roomsautojoin-pane">
 
   <preferences>
@@ -38,7 +38,7 @@
 	      id="roomsautojoin"
 	      label="Enable rooms autojoin"/>
     
-    <label control="roomid" value="Specify a room and a nickname:"/>
+    <label control="roomid" value="Specify a room, a nickname and an account:"/>
     
   <grid>
     <columns>
@@ -49,17 +49,19 @@
       <row>
 	<textbox id="roomid"
 		 value="...@places.sameplace.cc/"
-
-		 onkeypress="return notifymeRoomsAutojoin.receivedRET(event);"/>
+		 onkeypress="return notifymeRoomsAutojoin.spPpPref.receivedRET(event);"/>
 	</row>
       <row>
 	<textbox id="nickid"
 		 value="nickname"
-		 onkeypress="return notifymeRoomsAutojoin.receivedRET(event);"/>
+		 onkeypress="return notifymeRoomsAutojoin.spPpPref.receivedRET(event);"/>
 	
+	<menulist id="account" flex="1" label="Select an account" sizetopopup="none">
+          <menupopup id="xmpp-popup-accounts"/>
+	</menulist>
 	<button label="Add"
 		accesskey="A"
-		oncommand="notifymeRoomsAutojoin.addItem();"
+		oncommand="notifymeRoomsAutojoin.spPpPref.addItem();"
 		/>
       </row>
       <listbox id="thelist"
@@ -69,7 +71,7 @@
 	      label="Remove"
 	      accesskey="R"
 		disabled="true"
-	      oncommand="notifymeRoomsAutojoin.removeSelectedRoom();"/>
+	      oncommand="notifymeRoomsAutojoin.spPpPref.removeSelectedRoom();"/>
     </rows>
   </grid>
   </vbox>

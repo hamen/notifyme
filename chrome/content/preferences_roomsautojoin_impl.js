@@ -17,91 +17,108 @@
   Author: Ivan Morgillo < imorgillo [at] sanniolug [dot] org >
 */
 
-/// GLOBAL DEFINITIONS
-// ----------------------------------------------------------------------
+var spPpPref = {
+    pref : Components.classes['@mozilla.org/preferences-service;1']
+    .getService(Components.interfaces.nsIPrefService)
+    .getBranch('extensions.notifyme.'),
+    
+    loader: Components.classes['@mozilla.org/moz/jssubscript-loader;1']
+     	.getService(Components.interfaces.mozIJSSubScriptLoader),
 
-var Cc = Components.classes;
-var Ci = Components.interfaces;
-var Cr = Components.results;
-
-const pref = Cc['@mozilla.org/preferences-service;1']
-    .getService(Ci.nsIPrefService)
-    .getBranch('extensions.notifyme.');
-
-var roomsarray = new Array();
-var pref_roomsarray;
-var initList;
+    utils: {},
+    roomsarray: new Array(),
+    pref_roomsarray: [],
+    initList: "",
+    account: {}
+};
 
 // INITIALIZATION
 // ----------------------------------------------------------------------
-function init() {
+spPpPref.init = function () {
+    XMPP.accounts.forEach(function (account) {
+			      _('account').appendItem(account.jid);			      
+			  });
+
     window.sizeToContent();
-    roomsarray = eval(pref.getCharPref('rooms2join'));
-
-    initList = document.getElementById('thelist');   
-    //    roomsarray.forEach(printElt);
-    roomsarray.forEach(appendToList);
+    spPpPref.loader.loadSubScript('chrome://notifyme/content/lib/util_impl.js', spPpPref.utils);
     
-}
+    try {
+	this.roomsarray = spPpPref.utils.getJSON().parse(spPpPref.pref.getCharPref('rooms2join'));	
+    } catch (e) {
+	spPpPref.pref.setCharPref('rooms2join', "[]");
+    }
 
-function addItem(){
+    this.initList = document.getElementById('thelist');   
+    //    roomsarray.forEach(printElt);
+    this.roomsarray.forEach(spPpPref.appendToList);
+};
+
+spPpPref.addItem = function (){
     // Gets rooms list and current room user wants to add
     var list = document.getElementById('thelist');
     
     var roomid = document.getElementById('roomid').value;
     var nick = document.getElementById('nickid').value;
+    var account = _('account').selectedIndex;
+    account = XMPP.accounts[account];
     
-    if (nick != "") var room = roomid + nick;
-    else {
-	alert("Choose a nickname");
+    if (nick != "" && roomid != ""){
+	var room2save = {
+	    room: roomid,
+	    userNick: nick,
+	    userAccount: account.jid
+	};
+    } else {
+	alert("room: " + room + "userNick: " + userNick + "userAccount: " + userAccount);
 	return false;
     }
 
-    list.appendItem(room, room);
+    list.appendItem(room2save.room + room2save.userNick + " with " + room2save.userAccount, room2save);
+   
+    var roomsSavedList = spPpPref.roomsarray;
+
+    roomsSavedList.push(room2save);
     
-    // Prints latest element
-    var count = list.getRowCount();
-    //alert(list.getItemAtIndex(--count).label);
+    var rooms2saveJSON = spPpPref.utils.getJSON().stringify(roomsSavedList);
+    spPpPref.pref.setCharPref('rooms2join', rooms2saveJSON);
+};
 
-    var length = roomsarray.push(room);
-    //roomsarray.forEach(printElt);
-    pref_roomsarray = roomsarray.toSource();
-    //alert(pref_roomsarray);
-    pref.setCharPref('rooms2join', pref_roomsarray);
-}
-
-function removeSelectedRoom(){
+spPpPref.removeSelectedRoom = function (){
     
     var list = document.getElementById('thelist');
     var count = list.selectedCount;
     while (count--){
 	var item = list.selectedItems[0];
 	list.removeItemAt(list.getIndexOfItem(item));
-	roomsarray.splice(list.getIndexOfItem(item), 1);
+	spPpPref.roomsarray.splice(list.getIndexOfItem(item), 1);
     }
     
-    pref_roomsarray = roomsarray.toSource();
-    pref.setCharPref('rooms2join', pref_roomsarray);
+    spPpPref.pref_roomsarray = spPpPref.roomsarray.toSource();
+    spPpPref.pref.setCharPref('rooms2join', spPpPref.pref_roomsarray);
     //alert(pref_roomsarray);
-}
+};
 
-function receivedRET(event) {
+spPpPref.receivedRET = function (event) {
     if (event.keyCode == KeyEvent.DOM_VK_RETURN) {
-        addItem();
+        spPpPref.addItem();
 	return false;
     }
     return true;
-}
-function printElt(element, index, array) {
-    alert("[" + index + "] is " + element);
-}
+};
 
-function appendToList(element, index, array) {
-    // alert("[" + index + "] is " + element);
-    initList.appendItem(element, element);
-}
+spPpPref.printElt = function (element, index, array) {
+    alert("[" + index + "] is " + element.toSource());
+};
 
-function getRooms(){
-    roomsarray = eval(pref.getCharPref('rooms2join'));
-    return roomsarray;
+spPpPref.appendToList = function(element, index, array) {
+    spPpPref.initList.appendItem(element.room + element.userNick + " with " + element.userAccount, element);
+};
+
+spPpPref.getRooms = function (){
+    spPpPref.roomsarray = spPpPref.utils.getJSON().parse(spPpPref.pref.getCharPref('rooms2join'));
+    return spPpPref.roomsarray;
+};
+
+function _(id) {
+    return document.getElementById(id);
 }

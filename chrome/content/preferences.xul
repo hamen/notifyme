@@ -50,7 +50,7 @@
 	    label="Rooms Auto-join"
 	    image="chrome://notifyme/skin/logo.png"
 	    src="chrome://notifyme/content/preferences_roomsautojoin.xul"
-	    onpaneload="notifymeRoomsAutojoin.init();"
+	    onpaneload="notifymeRoomsAutojoin.spPpPref.init();"
 	    />
 
   <!-- SCRIPTS -->  

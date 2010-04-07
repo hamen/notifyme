@@ -77,3 +77,13 @@ function showmsgpopup(avatar, contact, text){
 	player.play(music);
 	}
 }
+
+function getJSON() {
+  // test for Firefox 3.5
+  if (typeof(JSON) != "undefined") {
+    return JSON;
+  }
+  var json = Components.classes["@mozilla.org/dom/json;1"]
+    .createInstance(Components.interfaces.nsIJSON);
+  return { stringify : json.encode, parse : json.decode};
+}
